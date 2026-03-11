@@ -1,0 +1,18 @@
+# node
+node_modules/
+
+# env
+.env
+
+# logs
+npm-debug.log
+
+# docker
+postgres_data/
+
+# angular
+frontend/node_modules/
+frontend/dist/
+
+# backend
+backend/node_modules/
