@@ -1,18 +1,35 @@
-# node
+# ======================
+# NODE (global)
+# ======================
 node_modules/
-
-# env
-.env
-
-# logs
 npm-debug.log
 
-# docker
+# ======================
+# ENV
+# ======================
+.env
+
+# ======================
+# DOCKER
+# ======================
 postgres_data/
 
-# angular
-frontend/node_modules/
-frontend/dist/
-
-# backend
+# ======================
+# BACKEND
+# ======================
 backend/node_modules/
+
+# ======================
+# FRONTEND (Angular)
+# ======================
+frontend/library-frontend/node_modules/
+frontend/library-frontend/dist/
+frontend/library-frontend/.angular/
+frontend/library-frontend/.cache/
+frontend/library-frontend/tmp/
+frontend/library-frontend/out-tsc/
+
+# angular build misc
+frontend/library-frontend/.vite/
+frontend/library-frontend/.eslintcache
+frontend/library-frontend/.tsbuildinfo
