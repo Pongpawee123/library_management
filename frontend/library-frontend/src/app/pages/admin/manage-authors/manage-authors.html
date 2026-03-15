@@ -1,0 +1,83 @@
+<div class="manage-authors-container fade-in">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark">✍️ จัดการรายชื่อผู้แต่ง</h3>
+      <p class="text-muted small">บันทึกข้อมูลประวัติผู้แต่งและนักเขียนในระบบ</p>
+    </div>
+    <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addAuthorModal">
+      <i class="bi bi-person-plus-fill me-1"></i> เพิ่มผู้แต่ง
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4">ผู้แต่ง</th>
+            <th>ประวัติย่อ</th>
+            <th class="text-center">จำนวนผลงาน</th>
+            <th class="text-center">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let author of authorsList">
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="author-avatar shadow-sm">
+                  {{ author.name.charAt(0) }}
+                </div>
+                <span class="fw-bold">{{ author.name }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="text-muted small">{{ author.bio || 'ไม่มีข้อมูลประวัติ' }}</span>
+            </td>
+            <td class="text-center">
+              <span class="badge bg-info-subtle text-info rounded-pill px-3">
+                {{ author.bookCount }} เล่ม
+              </span>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-icon text-primary me-1" title="แก้ไข">
+                <i class="bi bi-pencil-fill"></i>
+              </button>
+              <button class="btn btn-icon text-danger" (click)="deleteAuthor(author.id)" title="ลบ">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="addAuthorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4 shadow">
+      <div class="modal-header">
+        <h5 class="fw-bold">ข้อมูลผู้แต่งใหม่</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form [formGroup]="authorForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-bold">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+            <input type="text" class="form-control rounded-3 border-0 bg-light" formControlName="name" placeholder="ระบุชื่อผู้แต่ง">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold">ประวัติย่อ (ถ้ามี)</label>
+            <textarea class="form-control rounded-3 border-0 bg-light" formControlName="bio" rows="3" placeholder="ระบุข้อมูลสังกัด หรือประวัติสั้นๆ"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="!authorForm.valid">บันทึกข้อมูล</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

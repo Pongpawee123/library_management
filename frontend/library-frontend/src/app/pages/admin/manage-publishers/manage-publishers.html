@@ -1,0 +1,80 @@
+<div class="manage-publishers-container fade-in">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="fw-bold text-dark">🏢 จัดการสำนักพิมพ์</h3>
+      <p class="text-muted small">บันทึกรายชื่อบริษัทคู่ค้าและสำนักพิมพ์ของหนังสือในห้องสมุด</p>
+    </div>
+    <button class="btn btn-primary rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addPublisherModal">
+      <i class="bi bi-plus-circle me-1"></i> เพิ่มสำนักพิมพ์
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="ps-4">ชื่อสำนักพิมพ์</th>
+            <th>ที่อยู่ / จังหวัด</th>
+            <th>เบอร์โทรศัพท์ติดต่อ</th>
+            <th class="text-center">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pub of publishersList">
+            <td class="ps-4">
+              <span class="fw-bold text-dark">{{ pub.name }}</span>
+            </td>
+            <td>
+              <span class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{ pub.address }}</span>
+            </td>
+            <td>
+              <span class="text-muted"><i class="bi bi-telephone me-1"></i>{{ pub.contact }}</span>
+            </td>
+            <td class="text-center">
+              <button class="btn btn-icon text-primary me-1" title="แก้ไข">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button class="btn btn-icon text-danger" (click)="deletePublisher(pub.id)" title="ลบ">
+                <i class="bi bi-trash3-fill"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="addPublisherModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="fw-bold">เพิ่มสำนักพิมพ์ใหม่</h5>
+        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+      </div>
+      <form [formGroup]="publisherForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body py-4">
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">ชื่อสำนักพิมพ์ <span class="text-danger">*</span></label>
+            <input type="text" class="form-control rounded-3 border-0 bg-light" formControlName="name">
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">ที่อยู่</label>
+            <input type="text" class="form-control rounded-3 border-0 bg-light" formControlName="address">
+          </div>
+          <div class="mb-0">
+            <label class="form-label small fw-bold text-muted">เบอร์โทรศัพท์</label>
+            <input type="text" class="form-control rounded-3 border-0 bg-light" formControlName="contact" placeholder="เช่น 02-xxx-xxxx">
+          </div>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="!publisherForm.valid">บันทึก</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

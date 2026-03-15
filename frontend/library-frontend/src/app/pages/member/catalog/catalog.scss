@@ -1,0 +1,58 @@
+$primary-blue: #3b6ef8;
+
+.catalog-container {
+  padding: 10px;
+}
+
+/* ช่องค้นหาสไตล์ทันสมัย */
+.search-wrapper {
+  background: white;
+  border-radius: 15px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: $primary-blue;
+    box-shadow: 0 0 0 4px rgba(59, 110, 247, 0.1);
+  }
+}
+
+/* สไตล์การ์ดหนังสือ */
+.book-card {
+  transition: all 0.3s ease;
+  border-radius: 20px !important;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+  }
+}
+
+.book-cover-bg {
+  height: 200px;
+  background-color: #f8fafc;
+  position: relative;
+}
+
+.status-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  padding: 5px 12px;
+  border-radius: 30px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+/* อนิเมชันเลื่อนขึ้นตอนโหลดหน้า */
+.fade-in {
+  animation: slideIn 0.5s ease-out;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

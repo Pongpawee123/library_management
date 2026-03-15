@@ -1,0 +1,254 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+// ── Tokens ────────────────────────────────────────────────────
+$a: #010e2f;
+$b: #003096;
+$c: #1d66f5;
+$d: #00cfe8;
+$e: #00e5b4;
+$trans: 0.22s cubic-bezier(0.4,0,0.2,1);
+
+// ── Shell ─────────────────────────────────────────────────────
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, $a 0%, $b 30%, $c 65%, $d 88%, $e 100%);
+}
+
+// ── Animated mesh blobs ───────────────────────────────────────
+.auth-mesh {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  animation: blobPulse ease-in-out infinite alternate;
+
+  &--1 {
+    width: 500px; height: 500px;
+    background: rgba($d,0.2);
+    top: -180px; left: -120px;
+    animation-duration: 10s;
+  }
+  &--2 {
+    width: 420px; height: 420px;
+    background: rgba($e,0.18);
+    bottom: -120px; right: -80px;
+    animation-duration: 13s;
+    animation-delay: -4s;
+  }
+  &--3 {
+    width: 300px; height: 300px;
+    background: rgba(255,255,255,0.06);
+    top: 35%; left: 58%;
+    animation-duration: 8s;
+    animation-delay: -2s;
+  }
+  &--4 {
+    width: 220px; height: 220px;
+    background: rgba($c,0.25);
+    top: 5%; right: 15%;
+    animation-duration: 15s;
+    animation-delay: -7s;
+  }
+}
+
+@keyframes blobPulse {
+  from { transform: scale(1) translate(0,0); }
+  to   { transform: scale(1.1) translate(25px,35px); }
+}
+
+// ── Floating geometric shapes ─────────────────────────────────
+.floating-shapes { position: absolute; inset: 0; pointer-events: none; }
+
+.fshape {
+  position: absolute;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  animation: shapeDrift ease-in-out infinite alternate;
+
+  &--1 {
+    width: 80px; height: 80px;
+    border-radius: 20px;
+    top: 12%; left: 7%;
+    transform: rotate(22deg);
+    animation-duration: 9s;
+  }
+  &--2 {
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    bottom: 18%; right: 8%;
+    animation-duration: 11s;
+    animation-delay: -3s;
+  }
+  &--3 {
+    width: 100px; height: 100px;
+    border-radius: 30px;
+    top: 60%; left: 4%;
+    transform: rotate(-14deg);
+    animation-duration: 14s;
+    animation-delay: -6s;
+  }
+}
+
+@keyframes shapeDrift {
+  from { transform: translateY(0) rotate(0deg);    opacity: 0.4; }
+  to   { transform: translateY(-18px) rotate(8deg); opacity: 0.8; }
+}
+
+// ── Centered column ───────────────────────────────────────────
+.auth-center {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+// Logo
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  animation: fadeSlideDown 0.55s ease both;
+}
+
+.auth-logo-icon {
+  width: 54px; height: 54px;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+}
+
+.auth-logo-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.auth-logo-tagline {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.08em;
+  margin: 3px 0 0;
+}
+
+// Glass card
+.auth-glass-card {
+  width: 100%;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1.5px solid rgba(255,255,255,0.55);
+  border-radius: 22px;
+  padding: 40px 38px;
+  box-shadow:
+    0 10px 40px rgba($a,0.22),
+    0 2px 8px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.95);
+  animation: fadeSlideUp 0.55s ease 0.1s both;
+
+  @media (max-width: 480px) {
+    padding: 30px 20px;
+    border-radius: 16px;
+  }
+}
+
+.auth-copy {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.38);
+  text-align: center;
+  margin: 0;
+  animation: fadeSlideUp 0.55s ease 0.2s both;
+}
+
+// ── Entry animations ──────────────────────────────────────────
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Inner form styles ─────────────────────────────────────────
+:host ::ng-deep {
+  h2, h3, h4 {
+    font-weight: 700;
+    color: $b;
+  }
+
+  .form-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: #2d4a8a;
+    margin-bottom: 6px;
+  }
+
+  .form-control, .form-select {
+    border-radius: 10px;
+    border: 1.5px solid #d0dcf5;
+    padding: 10px 14px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.9);
+    transition: border-color $trans, box-shadow $trans;
+
+    &:focus {
+      border-color: $c;
+      box-shadow: 0 0 0 3.5px rgba($c,0.16);
+      background: #fff;
+    }
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, $b, $c);
+    border: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+    padding: 11px;
+    border-radius: 10px;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 16px rgba($c,0.35);
+    transition: all $trans;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba($c,0.45);
+    }
+    &:active { transform: translateY(0); }
+  }
+
+  .btn-outline-primary {
+    border: 1.5px solid $c;
+    color: $c;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all $trans;
+    &:hover { background: $c; color: #fff; transform: translateY(-1px); }
+  }
+}

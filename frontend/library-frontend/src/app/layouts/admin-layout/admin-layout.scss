@@ -1,0 +1,98 @@
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f0f4f8; /* ปรับเป็นสีเทาอมฟ้าอ่อนๆ ให้เข้ากับธีมหลัก */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+  width: 260px;
+  /* โทนสีไล่ระดับ น้ำเงินมหาสมุทร (Ocean Blue) */
+  background: linear-gradient(180deg, #0052D4 0%, #4364F7 100%);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 16px;
+  position: fixed; /* ตรึงให้อยู่กับที่ */
+  top: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.sidebar-brand {
+  text-align: center;
+  margin-bottom: 30px;
+
+  .brand-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+}
+
+.sidebar-nav {
+  flex-grow: 1;
+  gap: 8px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.85);
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+
+  i { font-size: 1.1rem; }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-weight: 600;
+  }
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+
+  .btn-go-member {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+  }
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 260px; /* เว้นที่ให้ Sidebar */
+  padding: 30px;
+  overflow-y: auto;
+}
