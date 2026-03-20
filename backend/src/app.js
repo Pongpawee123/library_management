@@ -1,24 +1,40 @@
 const express = require("express");
 const cors = require("cors");
-const pool = require("./config/db");
+const dotenv = require("dotenv");
+dotenv.config();
+
+// import Routes ที่สร้างไว้
+const authRoute    = require("./routes/authRoute.js");
+const accountRoute = require("./routes/accountRoute.js");
+const authorRoute = require('./routes/authorRoute.js');
+const bookRoute = require('./routes/bookRoute.js');
+const borrowRoute = require('./routes/borrowRoute.js');
+const categoryRoute = require('./routes/categoryRoute.js');
+const publisherRoute = require('./routes/publisherRoute.js');
+const reportRoute = require('./routes/reportRoute.js');
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ทดสอบ server ทำงาน
 app.get("/", (req, res) => {
-  res.send("Library API running");
+    res.send("Library API running");
 });
 
-app.get("/api/books", async (req, res) => {
-  try {
-    const result = await pool.query("SELECT * FROM books");
-    res.json(result.rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// เชื่อม Routes
+app.use("/api/auth",    authRoute);
+app.use("/api/account", accountRoute);
+app.use("/api/authors", authorRoute);
+app.use("/api/books",   bookRoute);
+app.use('/api/borrows', borrowRoute);
+app.use('/api/categories', categoryRoute);
+app.use('/api/publishers', publisherRoute);
+app.use('/api/reports', reportRoute);
 
-app.listen(3000, () => {
-  console.log("Server running on port 3000");
+// เริ่ม server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
