@@ -1,0 +1,58 @@
+<div class="dashboard-card shadow-sm fade-in">
+  <h3 class="fw-bold mb-2">แดชบอร์ด</h3>
+  <p class="text-muted mb-4">ภาพรวมสถิติข้อมูลภายในระบบห้องสมุด</p>
+
+  <div class="row g-4">
+    
+    <div class="col-md-4">
+      <div class="stat-card stat-purple shadow-sm">
+        <div class="stat-title">หนังสือทั้งหมด</div>
+        <div class="stat-value">{{ stats.totalBooks | number }}</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="stat-card stat-green shadow-sm">
+        <div class="stat-title">สมาชิกทั้งหมด</div>
+        <div class="stat-value">{{ stats.totalMembers | number }}</div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="stat-card stat-pink shadow-sm">
+        <div class="stat-title">กำลังยืมอยู่</div>
+        <div class="stat-value">{{ stats.activeBorrows }}</div>
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="mt-5">
+    <h5 class="fw-bold mb-3">📝 กิจกรรมล่าสุด</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ผู้ใช้งาน</th>
+            <th>หนังสือ</th>
+            <th>วันที่</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of recentActivities">
+            <td class="fw-bold text-primary">{{ item.member }}</td>
+            <td>{{ item.book }}</td>
+            <td class="text-muted">{{ item.date }}</td>
+            <td>
+              <span class="badge rounded-pill" 
+                    [ngClass]="item.status === 'คืนแล้ว' ? 'bg-success' : 'bg-warning text-dark'">
+                {{ item.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

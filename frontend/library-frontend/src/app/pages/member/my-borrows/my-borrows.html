@@ -1,0 +1,90 @@
+<div class="my-borrows-container fade-in">
+  
+  <!-- ส่วนหัว -->
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-2"><i class="bi bi-journal-bookmark-fill text-primary me-2"></i>ประวัติการยืมของฉัน</h2>
+      <p class="text-muted mb-0">ตรวจสอบสถานะหนังสือที่คุณยืม กำหนดคืน และประวัติย้อนหลัง</p>
+    </div>
+  </div>
+
+  <!-- การ์ดตารางข้อมูล -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="px-4 py-3 text-secondary font-weight-semibold">หนังสือ</th>
+            <th class="py-3 text-secondary font-weight-semibold">วันที่ยืม</th>
+            <th class="py-3 text-secondary font-weight-semibold">กำหนดคืน</th>
+            <th class="py-3 text-secondary font-weight-semibold">สถานะ</th>
+            <th class="px-4 py-3 text-secondary font-weight-semibold text-end">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- ลูปข้อมูลประวัติการยืม -->
+          <tr *ngFor="let record of myBorrowHistory">
+            
+            <td class="px-4 py-3">
+              <div class="d-flex align-items-center gap-3">
+                <div class="book-icon-placeholder bg-primary-subtle text-primary rounded-3 d-flex align-items-center justify-content-center">
+                  <i class="bi bi-book fs-4"></i>
+                </div>
+                <div>
+                  <div class="fw-bold text-dark">{{ record.bookTitle }}</div>
+                  <div class="small text-muted">{{ record.author }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="py-3 text-muted">
+              {{ record.borrowDate }}
+            </td>
+
+            <td class="py-3">
+              <span [ngClass]="record.status === 'Overdue' ? 'text-danger fw-bold' : 'text-dark'">
+                {{ record.dueDate }}
+              </span>
+              <!-- แจ้งเตือนถ้าเลยกำหนด -->
+              <div *ngIf="record.status === 'Overdue'" class="small text-danger mt-1">
+                <i class="bi bi-exclamation-circle-fill me-1"></i>เลยกำหนด!
+              </div>
+            </td>
+
+            <td class="py-3">
+              <!-- ป้ายสถานะ -->
+              <span class="badge rounded-pill px-3 py-2"
+                [ngClass]="{
+                  'bg-warning text-dark': record.status === 'Pending',
+                  'bg-primary': record.status === 'Borrowed',
+                  'bg-danger': record.status === 'Overdue',
+                  'bg-success': record.status === 'Returned'
+                }">
+                {{ 
+                  record.status === 'Pending' ? 'รอแอดมินอนุมัติ' : 
+                  record.status === 'Borrowed' ? 'กำลังยืม' : 
+                  record.status === 'Overdue' ? 'เลยกำหนดคืน' : 'คืนหนังสือแล้ว' 
+                }}
+              </span>
+            </td>
+
+            <td class="px-4 py-3 text-end">
+              <!-- ปุ่มต่อเวลา (แสดงเฉพาะตอนที่กำลังยืมอยู่และยังไม่เลยกำหนด) -->
+              <button *ngIf="record.status === 'Borrowed'" 
+                      class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                      (click)="renewBook(record)">
+                <i class="bi bi-arrow-clockwise me-1"></i> ขอต่อเวลา
+              </button>
+              
+              <span *ngIf="record.status !== 'Borrowed'" class="text-muted small">
+                -
+              </span>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

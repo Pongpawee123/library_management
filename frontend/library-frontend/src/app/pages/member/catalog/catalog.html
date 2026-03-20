@@ -1,0 +1,55 @@
+<div class="catalog-container fade-in">
+  
+  <!-- ส่วนหัวและช่องค้นหา -->
+  <div class="row align-items-center mb-5">
+    <div class="col-lg-6">
+      <h2 class="fw-bold text-dark mb-1">📚 คลังหนังสือ</h2>
+      <p class="text-muted">สำรวจและเลือกยืมหนังสือที่คุณสนใจจากหมวดหมู่ต่างๆ</p>
+    </div>
+    <div class="col-lg-6">
+      <div class="search-wrapper shadow-sm bg-white rounded-pill px-3 py-2 d-flex align-items-center">
+        <i class="bi bi-search text-muted me-2"></i>
+        <input type="text" class="form-control border-0 shadow-none bg-transparent" placeholder="ค้นหาชื่อหนังสือ, ผู้แต่ง, หรือหมวดหมู่...">
+      </div>
+    </div>
+  </div>
+
+  <!-- กริดแสดงการ์ดหนังสือ -->
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    
+    <div class="col" *ngFor="let book of books">
+      <div class="card h-100 book-card border-0 shadow-sm overflow-hidden">
+        
+        <!-- 🖼️ แก้ไขแล้ว: ส่วนแสดงรูปปกหนังสือ -->
+        <div class="book-cover-bg d-flex align-items-center justify-content-center position-relative" style="height: 220px; background-color: #f8f9fc;">
+          
+          <!-- ใช้แท็ก img ดึงรูปจาก imageUrl พร้อมใส่เงาให้ดู 3 มิติ -->
+          <img [src]="book.imageUrl" [alt]="book.title" 
+               style="max-height: 150px; width: auto; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.15)); transition: transform 0.3s ease;"
+               class="book-image-hover">
+          
+          <!-- ป้ายสถานะ (จัดให้อยู่มุมขวาบนของการ์ดรูป) -->
+          <div class="position-absolute top-0 end-0 m-3 badge rounded-pill px-3 py-2 shadow-sm" 
+               [ngClass]="book.status === 'Available' ? 'bg-success' : 'bg-danger'">
+            {{ book.status === 'Available' ? 'พร้อมยืม' : 'ถูกยืมแล้ว' }}
+          </div>
+        </div>
+
+        <!-- รายละเอียดหนังสือ -->
+        <div class="card-body p-4 d-flex flex-column">
+          <div class="text-primary small fw-bold mb-1">{{ book.category }}</div>
+          <h5 class="card-title fw-bold text-dark mb-2 text-truncate" [title]="book.title">{{ book.title }}</h5>
+          <p class="card-text text-muted small mb-4">โดย: {{ book.author }}</p>
+          
+          <!-- ปุ่มดูรายละเอียด (ดันลงล่างสุดอัตโนมัติด้วย mt-auto) -->
+          <a [routerLink]="['/book-detail', book.id]" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm mt-auto">
+            ดูรายละเอียด
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>

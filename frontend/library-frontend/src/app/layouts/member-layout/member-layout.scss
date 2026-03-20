@@ -1,0 +1,184 @@
+/* 💡 คำถามสอบ: "ทำไมต้องมี @use 'sass:color' ?"
+  💬 คำตอบ: "เพราะ Sass เวอร์ชันใหม่ (Dart Sass) บังคับให้เรียกใช้ Built-in Module 
+  เพื่อให้จัดการเรื่องสีได้แม่นยำขึ้น และป้องกันปัญหาชื่อฟังก์ชันซ้ำซ้อนครับ"
+*/
+@use "sass:color"; 
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+// ── Tokens (ตัวแปรสีที่แมตช์กับฝั่ง Admin) ────────────────────────
+$nav-blue-a: #0052D4; 
+$nav-blue-b: #3b6ef8; 
+$nav-blue-c: #6fb1fc; 
+$nav-h:      66px;
+$trans:      0.22s cubic-bezier(0.4,0,0.2,1);
+$radius:     12px;
+$primary-blue: #3b6ef8; // สีหลักสำหรับใช้ในฟังก์ชันปรับสี
+
+// ── Shell — การจัดวางโครงสร้างหลักให้สมมาตร ────────────────────────
+.member-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* บังคับความสูงเต็มจอพอดี */
+  font-family: 'Sarabun', 'Noto Sans Thai', sans-serif;
+  background: #f4f6fa; /* สีเทาอมฟ้าเดียวกับหน้า Admin */
+  
+  /* สร้างมิติด้วยการไล่สีแบบวงกลม (Radial Gradient) อ่อนๆ ที่มุมจอ */
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(67, 100, 247, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 90% 100%, rgba(0, 82, 212, 0.08) 0%, transparent 60%);
+}
+
+// ── Navbar — แถบเมนูด้านบน ────────────────────────────────────
+.member-navbar {
+  min-height: $nav-h;
+  /* ไล่สีพื้นหลังตามดีไซน์ Admin */
+  background: linear-gradient(100deg, $nav-blue-a 0%, $nav-blue-b 100%);
+  box-shadow: 0 4px 24px rgba(0, 82, 212, 0.25);
+  z-index: 100;
+  border: none;
+
+  /* เส้นขอบใสๆ ด้านล่างเพื่อเพิ่มความหรูหรา (Glass Effect) */
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  }
+}
+
+// Brand (โลโก้แบรนด์)
+.member-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: #fff;
+  font-size: 1.05rem;
+  
+  strong { font-weight: 700; }
+  &:hover { color: #fff; }
+}
+
+.member-brand-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.18);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid rgba(255,255,255,0.3);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform $trans;
+  &:hover { transform: rotate(-8deg) scale(1.1); }
+}
+
+// Custom Hamburger (ปุ่มเมนูมือถือ)
+.member-toggler {
+  background: rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4.5px;
+  
+  .toggler-bar {
+    display: block;
+    width: 20px; height: 2px;
+    background: #fff;
+    border-radius: 2px;
+  }
+}
+
+// Nav links (รายการเมนู)
+.member-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  color: rgba(255,255,255,0.78);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all $trans;
+
+  &:hover {
+    background: rgba(255,255,255,0.13);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  /* คลาสเมื่อเมนูนั้นถูกเลือก (Active State) */
+  &--active {
+    background: rgba(255,255,255,0.18) !important;
+    color: #fff !important;
+  }
+
+  @media (max-width: 991.98px) {
+    display: flex;
+    width: 100%;
+  }
+}
+
+// Switch Button (ปุ่มสลับไปแอดมิน)
+.member-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: #fff;
+  color: $nav-blue-a;
+  font-weight: 700;
+  font-size: 0.87rem;
+  border-radius: 24px;
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(0, 82, 212, 0.18);
+  transition: all $trans;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 82, 212, 0.25);
+  }
+}
+
+// 📱 Responsive Mobile Panel
+.navbar-collapse {
+  @media (max-width: 991.98px) {
+    /* 💡 แก้จุดที่ Warning แจ้งเตือน: ปรับสีพื้นหลังเมนูมือถือให้เข้มขึ้น 5% */
+    background: color.adjust($primary-blue, $lightness: -5%); 
+    backdrop-filter: blur(16px);
+    border-radius: 0 0 16px 16px;
+    margin: 0 -16px;
+    padding: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+}
+
+// ── Page Content — พื้นที่แสดงเนื้อหา ──────────────────────────
+.member-body {
+  flex: 1;
+  overflow-y: auto;
+  
+  /* ปรับแต่ง Scrollbar ให้ดูทันสมัย */
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+}
+
+.member-card {
+  background: #fff;
+  border-radius: 20px;
+  border-top: 4px solid $nav-blue-b;
+  padding: 2.5rem;
+  min-height: 65vh; /* บังคับความสูงเพื่อให้หน้าจอสมมาตร */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  animation: slideUp 0.5s ease-out;
+
+  @media (max-width: 575.98px) { padding: 1.5rem; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

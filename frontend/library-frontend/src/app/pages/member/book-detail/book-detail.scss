@@ -1,0 +1,46 @@
+$primary-blue: #3b6ef8;
+
+.book-cover-large {
+  height: 450px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+/* 🌟 เติมลูกเล่นให้รูปหนังสือ: ตอนเอาเมาส์ชี้ให้หนังสือลอยขึ้นและขยายเบาๆ */
+.book-image-hover {
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  
+  &:hover {
+    transform: translateY(-12px) scale(1.05);
+    cursor: pointer;
+  }
+}
+
+.author-box {
+  .avatar-sm {
+    width: 40px;
+    height: 40px;
+    background: #f1f5f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.leading-relaxed {
+  line-height: 1.8;
+}
+
+/* ปรับสีป้าย Badge ให้อ่อนลง (Subtle style) */
+.bg-primary-subtle { background-color: rgba($primary-blue, 0.1) !important; }
+.bg-success-subtle { background-color: rgba(25, 135, 84, 0.1) !important; }
+.bg-danger-subtle { background-color: rgba(220, 53, 69, 0.1) !important; }
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}

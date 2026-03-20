@@ -1,0 +1,57 @@
+/* 💡 คำถามสอบ: "การใช้ SCSS แบบ Nesting (เขียนซ้อนข้างใน) มีข้อดียังไง?"
+     💬 คำตอบ: "ช่วยให้โค้ดอ่านง่ายขึ้นและเป็นการระบุ Scope ของ Style ให้ชัดเจน 
+     เช่น .stat-title ที่อยู่ข้างใน .stat-card จะไม่ไปกระทบกับคลาสชื่อเดียวกันในหน้าอื่นครับ" 
+*/
+.dashboard-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+}
+
+.stat-card {
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  height: 100%;
+  transition: transform 0.3s ease; /* ตั้งค่าความเร็วในการขยับเวลาเอาเมาส์ชี้ */
+
+  &:hover {
+    transform: translateY(-5px); /* เลื่อนขึ้น 5px เมื่อเอาเมาส์มาวาง (Hover Effect) */
+  }
+
+  .stat-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    opacity: 0.9;
+  }
+
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+}
+
+/* สีไล่ระดับของการ์ด (Gradient Colors) */
+.stat-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+}
+
+.stat-green {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+.stat-pink {
+  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+}
+
+/* อนิเมชัน Fade In ตอนเปิดหน้าจอ */
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}

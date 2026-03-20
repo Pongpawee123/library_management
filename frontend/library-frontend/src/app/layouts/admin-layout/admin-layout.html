@@ -1,0 +1,59 @@
+<div class="admin-shell">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <i class="bi bi-gear"></i>
+      </div>
+      <h5 class="fw-bold mb-0 mt-2">Admin Panel</h5>
+      <span class="small opacity-75">ระบบจัดการห้องสมุด</span>
+    </div>
+
+    <ul class="nav flex-column sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/dashboard']" routerLinkActive="active">
+          <i class="bi bi-grid"></i> แดชบอร์ด
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/books']" routerLinkActive="active">
+          <i class="bi bi-book"></i> จัดการหนังสือ
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/categories']" routerLinkActive="active">
+          <i class="bi bi-tags"></i> จัดการหมวดหมู่
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/authors']" routerLinkActive="active">
+          <i class="bi bi-pen"></i> จัดการผู้แต่ง
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/publishers']" routerLinkActive="active">
+          <i class="bi bi-building"></i> จัดการสำนักพิมพ์
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/borrows']" routerLinkActive="active">
+          <i class="bi bi-arrow-repeat"></i> จัดการยืม-คืน
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/admin/members']" routerLinkActive="active">
+          <i class="bi bi-people"></i> จัดการสมาชิก
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <a class="btn-go-member" [routerLink]="['/catalog']">
+        <i class="bi bi-globe"></i> ไปหน้า Member
+      </a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

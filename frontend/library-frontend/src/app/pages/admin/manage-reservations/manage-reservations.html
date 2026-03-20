@@ -1,0 +1,76 @@
+<div class="manage-reservations-container fade-in">
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="fw-bold text-dark mb-1">📅 จัดการการจองหนังสือ</h2>
+      <p class="text-muted">ตรวจสอบคิวการจอง และแจ้งเตือนสมาชิกเมื่อหนังสือพร้อมให้บริการ</p>
+    </div>
+    <div class="search-box">
+      <input type="text" class="form-control rounded-pill px-4" placeholder="🔍 ค้นหารหัสจอง, ชื่อหนังสือ...">
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th class="px-4 py-3 text-secondary font-weight-semibold">รหัสการจอง</th>
+            <th class="py-3 text-secondary font-weight-semibold">ผู้จอง</th>
+            <th class="py-3 text-secondary font-weight-semibold">หนังสือที่จอง</th>
+            <th class="py-3 text-secondary font-weight-semibold">วันที่กดจอง</th>
+            <th class="py-3 text-secondary font-weight-semibold">สถานะคิว</th>
+            <th class="px-4 py-3 text-secondary font-weight-semibold text-end">จัดการ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let res of reservations">
+            <td class="px-4 py-3 fw-bold text-muted">{{ res.id }}</td>
+            <td class="py-3 fw-semibold text-dark">{{ res.memberName }}</td>
+            <td class="py-3 text-primary"><i class="bi bi-book me-2"></i>{{ res.bookTitle }}</td>
+            <td class="py-3 small text-muted">{{ res.reserveDate }}</td>
+            <td class="py-3">
+              <span class="badge rounded-pill px-3 py-2"
+                [ngClass]="{
+                  'bg-warning text-dark': res.status === 'Pending',
+                  'bg-info': res.status === 'Ready',
+                  'bg-success': res.status === 'Completed',
+                  'bg-danger': res.status === 'Cancelled'
+                }">
+                <i class="bi" [ngClass]="{
+                  'bi-hourglass-split': res.status === 'Pending',
+                  'bi-box-seam': res.status === 'Ready',
+                  'bi-check-circle': res.status === 'Completed',
+                  'bi-x-circle': res.status === 'Cancelled'
+                }"></i>
+                {{ 
+                  res.status === 'Pending' ? 'รอหนังสือคืน' : 
+                  res.status === 'Ready' ? 'พร้อมให้รับ' : 
+                  res.status === 'Completed' ? 'รับหนังสือแล้ว' : 'ยกเลิกคิว' 
+                }}
+              </span>
+            </td>
+            <td class="px-4 py-3 text-end">
+              <button *ngIf="res.status === 'Pending'" class="btn btn-sm btn-info text-white rounded-pill px-3 me-1 shadow-sm" (click)="markAsReady(res)">
+                พร้อมรับ
+              </button>
+              
+              <button *ngIf="res.status === 'Ready'" class="btn btn-sm btn-success rounded-pill px-3 me-1 shadow-sm" (click)="completeReservation(res)">
+                รับไปแล้ว
+              </button>
+              
+              <button *ngIf="res.status === 'Pending' || res.status === 'Ready'" class="btn btn-sm btn-outline-danger rounded-circle" (click)="cancelReservation(res)" title="ยกเลิกคิว">
+                <i class="bi bi-x-lg"></i>
+              </button>
+
+              <span *ngIf="res.status === 'Completed' || res.status === 'Cancelled'" class="text-muted small">
+                ไม่มีแอคชัน
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,43 @@
+<div class="register-container">
+    <div class="overlay">
+        <div class="left">
+            <h1>Welcome to the Library System</h1>
+            <p>Create your account to continue...</p>
+        </div>
+
+        <div class="right">
+            <div class="card">
+                <h2>Sign Up</h2>
+
+                <form (ngSubmit)="onRegister()" #registerForm="ngForm">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="fullname" [(ngModel)]="user.fullname" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" [(ngModel)]="user.email" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" [(ngModel)]="user.password" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="text" name="phone" [(ngModel)]="user.phone" required />
+                    </div>
+
+                    <button type="submit">Sign Up →</button>
+
+                    <p class="login-link">
+                        Already have an account?
+                        <a routerLink="/auth/login">Log in</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

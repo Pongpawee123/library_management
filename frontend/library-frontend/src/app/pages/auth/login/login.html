@@ -1,0 +1,35 @@
+<div class="login-page">
+    <main class="login-layout">
+        <section class="hero-copy" aria-label="Library introduction">
+            <p class="brand">Library Management System</p>
+            <h1>Welcome to the Libary<br />System</h1>
+            <p class="subtitle">Log in to continue...</p>
+        </section>
+
+        <section class="login-card" aria-label="Login form">
+            <h2>Log in</h2>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+                <label class="field">
+                    <span>Username</span>
+                    <input type="text" formControlName="username" autocomplete="username" placeholder="" />
+                </label>
+
+                <label class="field">
+                    <span>Password</span>
+                    <input type="password" formControlName="password" autocomplete="current-password" placeholder="" />
+                </label>
+
+                <button type="submit" [disabled]="loginForm.invalid">
+                    <span>Log in</span>
+                    <span class="arrow">»</span>
+                </button>
+            </form>
+
+            <p class="signup-text">
+                Don't have an account?<br />
+                <a routerLink="/auth/register">Sign up now</a>
+            </p>
+        </section>
+    </main>
+</div>
