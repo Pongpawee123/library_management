@@ -40,5 +40,18 @@ module.exports = {
             console.error('getAccount ERROR:', err);
             return response.error(res, err.message);
         }
+    },
+
+    // GET /api/auth/accounts/:id — ดู user คนเดียวตาม id
+    async getById(req, res) {
+        try {
+            const Account = require('../models/account.js');
+            const account = await Account.getById(req.params.id);
+            if (!account) return response.notFound(res, 'ไม่พบบัญชีผู้ใช้');
+            return response.success(res, account);
+        } catch (err) {
+            console.error('getById ERROR:', err);
+            return response.error(res, err.message);
+        }
     }
 };
