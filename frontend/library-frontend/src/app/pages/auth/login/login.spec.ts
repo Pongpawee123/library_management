@@ -1,23 +1,28 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { Login } from './login';
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './login.html',
+  styleUrls: ['./login.scss'],
+})
+export class LoginComponent {
+  private readonly fb = inject(FormBuilder);
 
-describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [Login]
-    })
-    .compileComponents();
-
-    fixture = TestBed.createComponent(Login);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+  readonly loginForm = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  onSubmit(): void {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    console.log('Login submitted', this.loginForm.value);
+  }
+}

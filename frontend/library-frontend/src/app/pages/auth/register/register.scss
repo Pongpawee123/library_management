@@ -1,0 +1,95 @@
+.register-container {
+    height: 100vh;
+    background: url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') no-repeat center center/cover;
+
+    .overlay {
+        display: flex;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .left {
+        flex: 1;
+        color: #fff;
+        padding: 80px;
+
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            opacity: 0.8;
+        }
+    }
+
+    .right {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .card {
+            background: rgba(20, 30, 40, 0.95);
+            padding: 30px;
+            border-radius: 10px;
+            width: 320px;
+            color: #fff;
+
+            h2 {
+                margin-bottom: 20px;
+                text-align: center;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+
+                label {
+                    display: block;
+                    margin-bottom: 5px;
+                    font-size: 14px;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 10px;
+                    border: none;
+                    border-bottom: 1px solid #888;
+                    background: transparent;
+                    color: #fff;
+
+                    &:focus {
+                        outline: none;
+                        border-bottom: 1px solid #00aaff;
+                    }
+                }
+            }
+
+            button {
+                width: 100%;
+                padding: 10px;
+                background: #00aaff;
+                border: none;
+                border-radius: 20px;
+                color: #fff;
+                cursor: pointer;
+                margin-top: 10px;
+
+                &:hover {
+                    background: #008ecc;
+                }
+            }
+
+            .login-link {
+                margin-top: 15px;
+                text-align: center;
+                font-size: 13px;
+
+                a {
+                    color: #00aaff;
+                    text-decoration: none;
+                }
+            }
+        }
+    }
+}
