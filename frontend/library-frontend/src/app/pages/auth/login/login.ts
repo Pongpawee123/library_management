@@ -1,72 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrls: ['./login.scss'],
 })
 export class Login {
+  private readonly fb = inject(FormBuilder);
+  private router = inject(Router);
 
-  // ── Form model ──────────────────────────────────────────────
-  credentials = {
-    email: '',
-    password: '',
-  };
+  readonly loginForm = this.fb.group({
+    username: ['', Validators.required],
+    password: ['', [Validators.required, Validators.minLength(4)]],
+  });
 
-  // ── UI state ─────────────────────────────────────────────────
-  showPassword = false;
-  isLoading = false;
-  errorMessage = '';
-
-  /** Dynamically display the current year in the footer */
-  readonly currentYear = new Date().getFullYear();
-
-  constructor(private router: Router) { }
-
-  // ── Toggle password visibility ────────────────────────────────
-  togglePassword(): void {
-    this.showPassword = !this.showPassword;
-  }
-
-  // ── Handle form submit ────────────────────────────────────────
   onSubmit(): void {
-    this.errorMessage = '';
-
-    if (!this.credentials.email || !this.credentials.password) {
-      this.errorMessage = 'Please fill in all fields.';
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       return;
     }
 
-    this.isLoading = true;
-
-    // TODO: Replace with real AuthService call, e.g.:
-    // this.authService.login(this.credentials).subscribe({ ... })
-    this.mockLogin();
-  }
-
-  // ── Mock login (replace with real service) ────────────────────
-  private mockLogin(): void {
-    setTimeout(() => {
-      this.isLoading = false;
-
-      // Demo credentials check
-      if (
-        this.credentials.email === 'admin@library.com' &&
-        this.credentials.password === 'password'
-      ) {
-        this.router.navigate(['/admin/dashboard']);
-      } else if (
-        this.credentials.email === 'member@library.com' &&
-        this.credentials.password === 'password'
-      ) {
-        this.router.navigate(['/catalog']);
-      } else {
-        this.errorMessage = 'Invalid email or password. Please try again.';
-      }
-    }, 1200);
+    console.log('Login submitted', this.loginForm.value);
+    // Mock successful login redirection
+    this.router.navigate(['/admin/dashboard']);
   }
 }
