@@ -1,13 +1,13 @@
 -- 1. USERS  (3 roles: admin, librarian, member)
 ---------------------------------------------------------------
 INSERT INTO users (email, password_hash, role) VALUES
-('admin@lib.com',      'hash_admin', 'admin'),       -- id 1
-('librarian@lib.com',  'hash_lib1',  'librarian'),   -- id 2
-('member1@lib.com',    'hash_mem1',  'member'),      -- id 3
-('member2@lib.com',    'hash_mem2',  'member'),      -- id 4
-('member3@lib.com',    'hash_mem3',  'member'),      -- id 5
-('member4@lib.com',    'hash_mem4',  'member'),      -- id 6
-('member5@lib.com',    'hash_mem5',  'member');      -- id 7
+('admin@lib.com',      '$2b$10$./xzwCaP2XKEdKWxPz29YOBL37Rq9MdWN307TUTZ6QzKjSK3hx7DK', 'admin'),       -- id 1
+('librarian@lib.com',  '$2b$10$b8g0PZgj309Ej1pAx56DJefwfcPcEsbzSRV4Rxho1gPZ52MboTOeK',  'librarian'),   -- id 2
+('member1@lib.com',    '$2b$10$JNRRxBwRWjiDy8O1EAj5BerTzmXaIMQ3SmA2e9ruu2LRDBCdwTULq',  'member'),      -- id 3
+('member2@lib.com',    '$2b$10$lMRhfrnNiEV8DlXZEl/M2.PQDS60y4fXrB9J/NrCpsLMcRD1FA5E6',  'member'),      -- id 4
+('member3@lib.com',    '$2b$10$txBXUZ1FnOnzCPwMr0VRCuKM7PMaiV0yaZEzxAC5s4LkSmfJ/Bn/q',  'member'),      -- id 5
+('member4@lib.com',    '$2b$10$hbFV2IOuqqhUSuIecrto1esoOXntbVs3sa01/f4PZmO7REFXtn01a',  'member'),      -- id 6
+('member5@lib.com',    '$2b$10$9/lQ9JbJzhvzg6LRtPGLoeaZN/gvWW9mLR8Z5Bno.yqgmSSUzf2SC',  'member');      -- id 7
 
 
 -- 2. PUBLISHERS
