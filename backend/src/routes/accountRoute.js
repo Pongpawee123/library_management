@@ -1,14 +1,12 @@
-// src/routes/authRoutes.js
+// src/routes/accountRoute.js
 const express = require('express');
 const router = express.Router();
-const AuthController = require('../controllers/authController.js');
+const AccountController = require('../controllers/accountController.js');
 const authenticateToken = require('../middleware/authMiddleware.js');
 
-// ไม่ต้อง Token
-router.post('/login',    AuthController.login);
-
-// ต้อง Token
-router.get('/profile',   authenticateToken, AuthController.getProfile);
-router.get('/accounts',  authenticateToken, AuthController.getAccount);
+// ดู user ทั้งหมด
+router.get('/',      authenticateToken, AccountController.getAccount);
+// ดู user คนเดียว
+router.get('/:id',   authenticateToken, AccountController.getById);
 
 module.exports = router;

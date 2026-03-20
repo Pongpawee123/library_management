@@ -4,32 +4,39 @@ module.exports = {
 
     async getAll() {
         const result = await pool.query(
-            'SELECT * FROM categories ORDER BY id ASC'
+            'SELECT * FROM publishers ORDER BY id ASC'
         );
         return result.rows;
     },
+
     async getById(id) {
         const result = await pool.query(
-            'SELECT * FROM categories WHERE id = $1', [id]
+            'SELECT * FROM publishers WHERE id = $1', [id]
         );
         return result.rows[0];
     },
-    async create({ name }) {
+
+    async create({ name, contact_email }) {
         const result = await pool.query(
-            'INSERT INTO categories (name) VALUES ($1) RETURNING *', [name]
+            `INSERT INTO publishers (name, contact_email)
+             VALUES ($1, $2) RETURNING *`,
+            [name, contact_email]
         );
         return result.rows[0];
     },
-    async update(id, { name }) {
+
+    async update(id, { name, contact_email }) {
         const result = await pool.query(
-            'UPDATE categories SET name=$1 WHERE id=$2 RETURNING *',
-            [name, id]
+            `UPDATE publishers SET name=$1, contact_email=$2
+             WHERE id=$3 RETURNING *`,
+            [name, contact_email, id]
         );
         return result.rows[0];
     },
+
     async remove(id) {
         const result = await pool.query(
-            'DELETE FROM categories WHERE id=$1 RETURNING *', [id]
+            'DELETE FROM publishers WHERE id=$1 RETURNING *', [id]
         );
         return result.rows[0];
     }

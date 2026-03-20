@@ -1,63 +1,57 @@
-const Account = require('../models/authModel.js');
-const jwt = require('jsonwebtoken');
-const secret = process.env.JWT_SECRET || "123456789abcdefg";
+// src/controllers/accountController.js
+const AuthService = require('../services/authService.js');
+const response = require('../utils/responseUtil.js');
 
 module.exports = {
 
-    async getAccount(req, res) {
-        try {
-            const accounts = await Account.getAll();
-            res.json(accounts);
-        } catch (err) {
-            console.error("getAccount ERROR:", err);
-            return res.status(500).json({ error: "Internal Server Error", message: err?.message });
-        }
-    },
-
-    async getProfile(req, res) {
-        try {
-            const user = await Account.getById(req.user.sub);
-            //                                  ↑ sub มาจาก JWT token ที่ sign ไว้
-            if (!user) return res.status(404).json({ error: 'User not found' });
-            res.json({ id: user.id, email: user.email, role: user.role });
-        } catch (err) {
-            console.error("getProfile ERROR:", err);
-            return res.status(500).json({ error: "Internal Server Error", message: err?.message });
-        }
-    },
-
+    // POST /api/auth/login — เข้าสู่ระบบ
     async login(req, res) {
         try {
-            const { email, password } = req.body;
-            console.log(`Login Attempt for user: ${email}`);
-
-            if (!email || !password) {
-                return res.status(400).json({ error: 'กรุณากรอก email และ password' });
-            }
-
-            let user = await Account.login(email, password);
-
-            if (user == null) {
-                return res.status(400).json({ error: 'email หรือ password ไม่ถูกต้อง' });
-            } else {
-                const token = jwt.sign(
-                    { sub: user.id, email: user.email, role: user.role },
-                    
-                    secret,
-                    { expiresIn: '1h' }
-                );
-
-                return res.json({
-                    access_token: token,
-                    token_type: 'bearer',
-                    email: user.email,
-                    role: user.role,
-                    expires_in: 3600
-                });
-            }
+            const result = await AuthService.login(
+                req.body.email,
+                req.body.password
+            );
+            return response.success(res, result);
         } catch (err) {
-            console.error("login ERROR:", err);
-            return res.status(500).json({ error: "Internal Server Error", message: err?.message });
+            console.error('login ERROR:', err);
+            const status = err.message.includes('กรุณา') ? 400 : 401;
+            return response.error(res, err.message, status);
+        }
+    },
+
+    // GET /api/auth/profile — ดูโปรไฟล์ตัวเอง
+    async getProfile(req, res) {
+        try {
+            const user = await AuthService.getProfile(req.user.sub);
+            return response.success(res, user);
+        } catch (err) {
+            console.error('getProfile ERROR:', err);
+            return response.notFound(res, err.message);
+        }
+    },
+
+    // GET /api/auth/accounts — ดู users ทั้งหมด
+    async getAccount(req, res) {
+        try {
+            const Account = require('../models/account.js');
+            const accounts = await Account.getAll();
+            return response.success(res, accounts);
+        } catch (err) {
+            console.error('getAccount ERROR:', err);
+            return response.error(res, err.message);
+        }
+    },
+
+    // GET /api/auth/accounts/:id — ดู user คนเดียวตาม id
+    async getById(req, res) {
+        try {
+            const Account = require('../models/account.js');
+            const account = await Account.getById(req.params.id);
+            if (!account) return response.notFound(res, 'ไม่พบบัญชีผู้ใช้');
+            return response.success(res, account);
+        } catch (err) {
+            console.error('getById ERROR:', err);
+            return response.error(res, err.message);
         }
     }
 };

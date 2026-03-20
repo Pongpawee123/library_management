@@ -1,14 +1,19 @@
-// models/bookModel.js
 const pool = require('../config/db.js');
 
 module.exports = {
 
+    // ดึงหนังสือทั้งหมด
     async getAll() {
         const result = await pool.query(`
             SELECT 
-                b.id, b.title, b.isbn,
-                b.total_copies, b.available_copies,
-                p.name AS publisher,
+                b.id,
+                b.title,
+                b.isbn,
+                b.cover_image,          
+                b.total_copies,
+                b.available_copies,
+                b.created_at,
+                p.name                     AS publisher,
                 ARRAY_AGG(DISTINCT a.name) AS authors,
                 ARRAY_AGG(DISTINCT c.name) AS categories
             FROM books b
@@ -26,9 +31,14 @@ module.exports = {
     async getById(id) {
         const result = await pool.query(`
             SELECT 
-                b.id, b.title, b.isbn,
-                b.total_copies, b.available_copies,
-                p.name AS publisher,
+                b.id,
+                b.title,
+                b.isbn,
+                b.cover_image,          
+                b.total_copies,
+                b.available_copies,
+                b.created_at,
+                p.name                     AS publisher,
                 ARRAY_AGG(DISTINCT a.name) AS authors,
                 ARRAY_AGG(DISTINCT c.name) AS categories
             FROM books b
@@ -43,16 +53,17 @@ module.exports = {
         return result.rows[0];
     },
 
-    async create({ title, isbn, publisher_id, total_copies, author_ids, category_ids }) {
+    async create({ title, isbn, publisher_id, total_copies, cover_image, author_ids, category_ids }) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
 
-            const bookResult = await client.query(
-                `INSERT INTO books (title, isbn, publisher_id, total_copies, available_copies)
-                 VALUES ($1, $2, $3, $4, $4) RETURNING *`,
-                [title, isbn, publisher_id, total_copies]
-            );
+            const bookResult = await client.query(`
+                INSERT INTO books (title, isbn, publisher_id, cover_image, total_copies, available_copies)
+                VALUES ($1, $2, $3, $4, $5, $5) RETURNING *
+                -- ↑ เพิ่ม cover_image
+            `, [title, isbn, publisher_id, cover_image, total_copies]);
+
             const book = bookResult.rows[0];
 
             if (author_ids?.length > 0) {
@@ -77,25 +88,19 @@ module.exports = {
             return book;
         } catch (err) {
             await client.query('ROLLBACK');
-            throw err; // โยน error กลับไปให้ Controller จัดการ
+            throw err;
         } finally {
             client.release();
         }
     },
 
-    async update(id, { title, isbn, publisher_id, total_copies }) {
-        const result = await pool.query(
-            `UPDATE books SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4
-             WHERE id=$5 RETURNING *`,
-            [title, isbn, publisher_id, total_copies, id]
-        );
+    async update(id, { title, isbn, publisher_id, total_copies, cover_image }) {
+        const result = await pool.query(`
+            UPDATE books
+            SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4, cover_image=$5
+            -- ↑ เพิ่ม cover_image
+            WHERE id=$6 RETURNING *
+        `, [title, isbn, publisher_id, total_copies, cover_image, id]);
         return result.rows[0];
     },
-
-    async remove(id) {
-        const result = await pool.query(
-            'DELETE FROM books WHERE id=$1 RETURNING *', [id]
-        );
-        return result.rows[0];
-    }
 };

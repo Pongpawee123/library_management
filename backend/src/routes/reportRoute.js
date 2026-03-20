@@ -1,38 +1,39 @@
 const express = require('express');
 const router = express.Router();
-const BorrowController = require('../controllers/borrowController.js');
+const ReportController = require('../controllers/reportController.js');
 const authenticateToken = require('../middleware/authMiddleware.js');
 const authorize = require('../middleware/roleMiddleware.js');
 
-router.get('/',
+// admin และ librarian เท่านั้น
+router.get('/summary',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.getAllBorrows
+    ReportController.getSummary
 );
-router.get('/member/:member_id',
+router.get('/overdue',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.getBorrowsByMember
+    ReportController.getOverdue
 );
-router.get('/:id',
+router.get('/popular-books',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.getBorrowById
+    ReportController.getPopularBooks
 );
-router.post('/',
+router.get('/borrow-history',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.borrowBook
+    ReportController.getBorrowHistory
 );
-router.put('/:id/return',
+router.get('/fines',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.returnBook
+    ReportController.getFines
 );
-router.put('/:id/extend',
+router.get('/member-activity',
     authenticateToken,
     authorize('admin', 'librarian'),
-    BorrowController.extendBorrow
+    ReportController.getMemberActivity
 );
 
 module.exports = router;
