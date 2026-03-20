@@ -3,7 +3,38 @@ const bcrypt = require('bcrypt');
 
 module.exports = {
 
-        async register({ email, password, role, full_name, phone }) {
+    // GET — ดึง user ทั้งหมด
+    async getAll() {
+        const result = await pool.query(
+            'SELECT id, email, role, created_at FROM users ORDER BY id ASC'
+        );
+        return result.rows;
+    },
+
+    // GET — ดึง user จาก id
+    async getById(id) {
+        const result = await pool.query(
+            'SELECT id, email, role, created_at FROM users WHERE id = $1', [id]
+        );
+        return result.rows[0];
+    },
+
+    // POST — login
+    async login(email, password) {
+        const result = await pool.query(
+            'SELECT * FROM users WHERE email = $1', [email]
+        );
+
+        if (result.rows.length === 0) return null;
+
+        const user = result.rows[0];
+        const isMatch = await bcrypt.compare(password, user.password_hash);
+
+        return isMatch ? user : null;
+    },
+
+    // POST — register
+    async register({ email, password, role, full_name, phone }) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -23,6 +54,7 @@ module.exports = {
                     [full_name, phone, user.id]
                 );
             }
+
             await client.query('COMMIT');
             return user;
         } catch (err) {

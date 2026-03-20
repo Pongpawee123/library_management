@@ -98,7 +98,6 @@ module.exports = {
         const result = await pool.query(`
             UPDATE books
             SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4, cover_image=$5
-            -- ↑ เพิ่ม cover_image
             WHERE id=$6 RETURNING *
         `, [title, isbn, publisher_id, total_copies, cover_image, id]);
         return result.rows[0];
