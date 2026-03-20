@@ -12,11 +12,40 @@ import { RouterLink } from '@angular/router';
 export class CatalogComponent {
   
   // 💡 รายชื่อหนังสือจำลอง (Mock Data) สำหรับแสดงหน้าคลังหนังสือ
+  // ตัวอย่างข้อมูลที่ต้องแก้ใน catalog.ts
   books = [
-    { id: 1, title: 'Angular 18 Essentials', author: 'ศ.ดร. สมชาย', category: 'Computing', status: 'Available', cover: '📘' },
-    { id: 2, title: 'Database Systems', author: 'อ.สายใจ', category: 'Database', status: 'Borrowed', cover: '📗' },
-    { id: 3, title: 'UI/UX Design 2026', author: 'Dr. John', category: 'Design', status: 'Available', cover: '📙' },
-    { id: 4, title: 'Fullstack Web Dev', author: 'ศ.ดร. สมชาย', category: 'Computing', status: 'Available', cover: '📕' }
+    { 
+      id: 1, // 👈 เพิ่มบรรทัดนี้เข้าไปครับ! (เปลี่ยนเลขไปเรื่อยๆ)
+      title: 'Angular 18 Essentials', 
+      author: 'ศ.ดร. สมชาย', 
+      category: 'Computing', 
+      status: 'Available', // (หรือ 'Ready' ตามที่เอิร์ธใช้)
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/3589/3589036.png' 
+    },
+    { 
+      id: 2, // 👈 เพิ่ม id เข้าไป
+      title: 'Database Systems', 
+      author: 'อ.สายใจ', 
+      category: 'Database', 
+      status: 'Borrowed',
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/2885/2885412.png'
+    },
+    { 
+      id: 3, // 👈 เพิ่ม id เข้าไป
+      title: 'UI/UX Design 2026', 
+      author: 'Dr. John', 
+      category: 'Design', 
+      status: 'Available',
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/1216/1216733.png'
+    },
+    { 
+      id: 4, // 👈 เพิ่ม id เข้าไป
+      title: 'Fullstack Web Dev', 
+      author: 'ศ.ดร. สมชาย', 
+      category: 'Computing', 
+      status: 'Available',
+      imageUrl: 'https://cdn-icons-png.flaticon.com/512/2092/2092430.png'
+    }
   ];
 
   /* 💡 คำถามสอบ: "เรากรองข้อมูลหนังสืออย่างไร?"

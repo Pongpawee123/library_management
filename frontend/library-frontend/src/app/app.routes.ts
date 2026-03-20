@@ -15,8 +15,8 @@ export const routes: Routes = [
     children: [
       { path: 'catalog', loadComponent: () => import('./pages/member/catalog/catalog').then(m => m.CatalogComponent) },
       { path: 'book-detail/:id', loadComponent: () => import('./pages/member/book-detail/book-detail').then(m => m.BookDetailComponent) },
-      { path: 'my-borrows', loadComponent: () => import('./pages/member/my-borrows/my-borrows').then(m => m.MyBorrows) },
-      { path: 'my-reservations', loadComponent: () => import('./pages/member/my-reservations/my-reservations').then(m => m.MyReservations) },
+      { path: 'my-borrows', loadComponent: () => import('./pages/member/my-borrows/my-borrows').then(m => m.MyBorrowsComponent) },
+      { path: 'my-reservations', loadComponent: () => import('./pages/member/my-reservations/my-reservations').then(m => m.MyReservationsComponent) },
       { path: 'profile', loadComponent: () => import('./pages/member/profile/profile').then(m => m.Profile) }
     ]
   },
@@ -32,9 +32,9 @@ export const routes: Routes = [
       { path: 'categories', loadComponent: () => import('./pages/admin/manage-categories/manage-categories').then(m => m.ManageCategoriesComponent) },
       { path: 'authors', loadComponent: () => import('./pages/admin/manage-authors/manage-authors').then(m => m.ManageAuthorsComponent) },
       { path: 'publishers', loadComponent: () => import('./pages/admin/manage-publishers/manage-publishers').then(m => m.ManagePublishersComponent) },
-      { path: 'borrows', loadComponent: () => import('./pages/admin/manage-borrows/manage-borrows').then(m => m.ManageBorrows) },
-      { path: 'reservations', loadComponent: () => import('./pages/admin/manage-reservations/manage-reservations').then(m => m.ManageReservations) },
-      { path: 'members', loadComponent: () => import('./pages/admin/manage-members/manage-members').then(m => m.ManageMembers) },
+      { path: 'borrows', loadComponent: () => import('./pages/admin/manage-borrows/manage-borrows').then(m => m.ManageBorrowsComponent) },
+      { path: 'reservations', loadComponent: () => import('./pages/admin/manage-reservations/manage-reservations').then(m => m.ManageReservationsComponent) },
+      { path: 'members', loadComponent: () => import('./pages/admin/manage-members/manage-members').then(m => m.ManageMembersComponent) },
       { path: 'staff', loadComponent: () => import('./pages/admin/manage-staff/manage-staff').then(m => m.ManageStaff) }
     ]
   },

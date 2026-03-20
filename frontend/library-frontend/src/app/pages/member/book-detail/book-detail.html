@@ -1,64 +1,73 @@
-<div class="book-detail-container fade-in" *ngIf="book">
+<div class="book-detail-container fade-in p-4" *ngIf="book">
   
-  <a [routerLink]="['/catalog']" class="btn btn-link text-decoration-none p-0 mb-4 text-primary">
-    <i class="bi bi-arrow-left me-1"></i> กลับไปหน้าคลังหนังสือ
-  </a>
+<a [routerLink]="['/catalog']" class="btn btn-link text-decoration-none p-0 mb-4 text-primary" style="cursor: pointer;">
+  <i class="bi bi-arrow-left me-1"></i> กลับไปหน้าคลังหนังสือ
+</a>
 
   <div class="row g-5">
     
+    <!-- 🖼️ ฝั่งซ้าย: รูปปกหนังสือ -->
     <div class="col-lg-4">
-      <div class="book-cover-large shadow-lg rounded-4 d-flex align-items-center justify-content-center">
-        <span class="display-1">{{ book.cover }}</span>
+      <!-- 💡 เพิ่ม bg-light และกำหนดความสูงขั้นต่ำ เพื่อให้รูปพื้นหลังใสดูโดดเด่น -->
+      <div class="book-cover-large shadow-lg rounded-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 400px; padding: 2rem;">
+        
+        <!-- 💡 เปลี่ยนจาก {{ book.cover }} เป็นแท็ก img -->
+        <img [src]="book.imageUrl" [alt]="book.title" 
+             style="max-height: 320px; width: auto; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.2)); transition: transform 0.3s ease;"
+             class="book-image-hover">
+             
       </div>
     </div>
 
+    <!-- 📝 ฝั่งขวา: รายละเอียดหนังสือ -->
     <div class="col-lg-8">
       <div class="d-flex align-items-center gap-2 mb-2">
-        <span class="badge bg-primary-subtle text-primary rounded-pill">{{ book.category }}</span>
-        <span class="badge" [ngClass]="book.available > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">{{ book.category }}</span>
+        <span class="badge rounded-pill px-3 py-2" [ngClass]="book.available > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
           {{ book.available > 0 ? 'พร้อมให้ยืม' : 'ถูกยืมเต็มแล้ว' }}
         </span>
       </div>
 
-      <h1 class="fw-bold text-dark mb-3">{{ book.title }}</h1>
+      <h1 class="fw-bold text-dark mb-3 mt-3">{{ book.title }}</h1>
       
-      <div class="author-box d-flex align-items-center gap-2 mb-4">
-        <div class="avatar-sm">✍️</div>
+      <div class="author-box d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-4" style="width: fit-content;">
+        <div class="avatar-sm bg-white rounded-circle shadow-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px; font-size: 1.2rem;">✍️</div>
         <div>
-          <div class="small text-muted">ผู้เขียน</div>
-          <div class="fw-bold">{{ book.author }}</div>
+          <div class="small text-muted mb-1">ผู้เขียน</div>
+          <div class="fw-bold text-dark">{{ book.author }}</div>
         </div>
       </div>
 
       <hr class="my-4 opacity-25">
 
-      <div class="row mb-4">
-        <div class="col-6">
-          <div class="small text-muted">ISBN</div>
+      <div class="row mb-4 bg-light rounded-4 p-3 mx-0">
+        <div class="col-6 border-end">
+          <div class="small text-muted mb-1">ISBN</div>
           <div class="fw-semibold text-dark">{{ book.isbn }}</div>
         </div>
-        <div class="col-6">
-          <div class="small text-muted">สำนักพิมพ์</div>
+        <div class="col-6 ps-4">
+          <div class="small text-muted mb-1">สำนักพิมพ์</div>
           <div class="fw-semibold text-dark">{{ book.publisher }}</div>
         </div>
       </div>
 
-      <h5 class="fw-bold text-dark mb-2">เรื่องย่อ</h5>
-      <p class="text-muted leading-relaxed mb-5">{{ book.description }}</p>
+      <h5 class="fw-bold text-dark mb-3">เรื่องย่อ</h5>
+      <p class="text-muted leading-relaxed mb-5" style="line-height: 1.8;">{{ book.description }}</p>
 
       <div class="d-flex gap-3">
-        <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm" 
+        <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm d-flex align-items-center" 
                 [disabled]="book.available === 0"
                 (click)="borrowBook()">
-          <i class="bi bi-check2-circle me-2"></i>ยืมหนังสือเล่มนี้
+          <i class="bi bi-check2-circle me-2 fs-5"></i>ยืมหนังสือเล่มนี้
         </button>
-        <button class="btn btn-outline-secondary btn-lg rounded-pill px-4">
-          <i class="bi bi-bookmark"></i> เก็บไว้ดูภายหลัง
+        <button class="btn btn-outline-secondary btn-lg rounded-pill px-4 d-flex align-items-center">
+          <i class="bi bi-bookmark fs-5 me-2"></i> เก็บไว้ดูภายหลัง
         </button>
       </div>
 
-      <div class="mt-3 small text-muted">
-        * เหลือหนังสือในคลังอีก {{ book.available }} จากทั้งหมด {{ book.total }} เล่ม
+      <div class="mt-4 small text-muted d-flex align-items-center">
+        <i class="bi bi-info-circle me-2"></i>
+        * เหลือหนังสือในคลังอีก <strong class="text-dark mx-1">{{ book.available }}</strong> จากทั้งหมด {{ book.total }} เล่ม
       </div>
     </div>
 
