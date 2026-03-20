@@ -12,6 +12,7 @@ const borrowRoute = require('./routes/borrowRoute.js');
 const categoryRoute = require('./routes/categoryRoute.js');
 const publisherRoute = require('./routes/publisherRoute.js');
 const reportRoute = require('./routes/reportRoute.js');
+const userRoute = require('./routes/userRoute.js');
 
 
 const app = express();
@@ -32,6 +33,7 @@ app.use('/api/borrows', borrowRoute);
 app.use('/api/categories', categoryRoute);
 app.use('/api/publishers', publisherRoute);
 app.use('/api/reports', reportRoute);
+app.use('/api/users', userRoute);
 
 // เริ่ม server
 const PORT = process.env.PORT || 3000;

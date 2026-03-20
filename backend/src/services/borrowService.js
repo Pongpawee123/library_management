@@ -41,23 +41,13 @@ module.exports = {
 
     // คืนหนังสือ + คำนวณค่าปรับ
     async returnBook(id) {
-
-        // เช็คว่ามีรายการยืมนี้ไหม
         const borrow = await Borrow.getById(id);
         if (!borrow) throw new Error('ไม่พบรายการยืม');
-        if (borrow.status === 'returned') {
-            throw new Error('คืนหนังสือแล้ว');
-        }
+        if (borrow.status === 'returned') throw new Error('คืนหนังสือแล้ว');
 
-        // คำนวณค่าปรับ วันละ 5 บาท
-        const now = new Date();
-        const due = new Date(borrow.due_date);
-        let fine_amount = 0;
+        // ใช้ fineService คำนวณค่าปรับ
+        const fine_amount = FineService.calculateFine(borrow.due_date);
 
-        if (now > due) {
-            const diffDays = Math.ceil((now - due) / (1000 * 60 * 60 * 24));
-            fine_amount = diffDays * 5;
-        }
         return await Borrow.returnBook(id, fine_amount);
     },
 
