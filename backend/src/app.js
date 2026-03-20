@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 // import Routes ที่สร้างไว้
-const authRoute    = require("./routes/authRoute.js");
+const authRoute = require("./routes/authRoute.js");
 const accountRoute = require("./routes/accountRoute.js");
 const authorRoute = require('./routes/authorRoute.js');
 const bookRoute = require('./routes/bookRoute.js');
@@ -16,7 +16,11 @@ const userRoute = require('./routes/userRoute.js');
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:4200', // ← Angular default port
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // ทดสอบ server ทำงาน
@@ -25,10 +29,10 @@ app.get("/", (req, res) => {
 });
 
 // เชื่อม Routes
-app.use("/api/auth",    authRoute);
+app.use("/api/auth", authRoute);
 app.use("/api/account", accountRoute);
 app.use("/api/authors", authorRoute);
-app.use("/api/books",   bookRoute);
+app.use("/api/books", bookRoute);
 app.use('/api/borrows', borrowRoute);
 app.use('/api/categories', categoryRoute);
 app.use('/api/publishers', publisherRoute);
