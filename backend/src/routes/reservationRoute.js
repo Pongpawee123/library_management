@@ -6,22 +6,22 @@ const authorize = require('../middleware/roleMiddleware.js');
 
 router.get('/',
     authenticateToken,
-    authorize('admin', 'librarian', 'staff'),
+    authorize('admin', 'librarian'),
     ReservationController.getAllReservations
 );
 router.get('/member/:member_id',
     authenticateToken,
-    authorize('admin', 'librarian', 'staff', 'member'),
+    authorize('admin', 'librarian', 'member'),
     ReservationController.getReservationsByMember
 );
 router.get('/:id',
     authenticateToken,
-    authorize('admin', 'librarian', 'staff'),
+    authorize('admin', 'librarian'),
     ReservationController.getReservationById
 );
 router.post('/',
     authenticateToken,
-    authorize('admin', 'librarian', 'staff', 'member'),
+    authorize('admin', 'librarian', 'member'),
     ReservationController.createReservation
 );
 router.put('/:id/cancel',

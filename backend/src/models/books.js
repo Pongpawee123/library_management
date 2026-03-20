@@ -9,6 +9,7 @@ module.exports = {
                 b.id,
                 b.title,
                 b.isbn,
+                b.cover_image,          
                 b.total_copies,
                 b.available_copies,
                 b.created_at,
@@ -26,13 +27,14 @@ module.exports = {
         `);
         return result.rows;
     },
-    // ดึงหนังสือเล่มเดียว
+
     async getById(id) {
         const result = await pool.query(`
             SELECT 
                 b.id,
                 b.title,
                 b.isbn,
+                b.cover_image,          
                 b.total_copies,
                 b.available_copies,
                 b.created_at,
@@ -50,19 +52,20 @@ module.exports = {
         `, [id]);
         return result.rows[0];
     },
-    // เพิ่มหนังสือใหม่
-    async create({ title, isbn, publisher_id, total_copies, author_ids, category_ids }) {
+
+    async create({ title, isbn, publisher_id, total_copies, cover_image, author_ids, category_ids }) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-            // insert หนังสือ
+
             const bookResult = await client.query(`
-                INSERT INTO books (title, isbn, publisher_id, total_copies, available_copies)
-                VALUES ($1, $2, $3, $4, $4) RETURNING *
-            `, [title, isbn, publisher_id, total_copies]);
+                INSERT INTO books (title, isbn, publisher_id, cover_image, total_copies, available_copies)
+                VALUES ($1, $2, $3, $4, $5, $5) RETURNING *
+                -- ↑ เพิ่ม cover_image
+            `, [title, isbn, publisher_id, cover_image, total_copies]);
 
             const book = bookResult.rows[0];
-            // insert authors
+
             if (author_ids?.length > 0) {
                 for (const author_id of author_ids) {
                     await client.query(
@@ -71,7 +74,7 @@ module.exports = {
                     );
                 }
             }
-            // insert categories
+
             if (category_ids?.length > 0) {
                 for (const category_id of category_ids) {
                     await client.query(
@@ -80,9 +83,9 @@ module.exports = {
                     );
                 }
             }
+
             await client.query('COMMIT');
             return book;
-
         } catch (err) {
             await client.query('ROLLBACK');
             throw err;
@@ -90,20 +93,14 @@ module.exports = {
             client.release();
         }
     },
-    // แก้ไขหนังสือ
-    async update(id, { title, isbn, publisher_id, total_copies }) {
+
+    async update(id, { title, isbn, publisher_id, total_copies, cover_image }) {
         const result = await pool.query(`
             UPDATE books
-            SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4
-            WHERE id=$5 RETURNING *
-        `, [title, isbn, publisher_id, total_copies, id]);
+            SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4, cover_image=$5
+            -- ↑ เพิ่ม cover_image
+            WHERE id=$6 RETURNING *
+        `, [title, isbn, publisher_id, total_copies, cover_image, id]);
         return result.rows[0];
     },
-    // ลบหนังสือ
-    async remove(id) {
-        const result = await pool.query(
-            'DELETE FROM books WHERE id=$1 RETURNING *', [id]
-        );
-        return result.rows[0];
-    }
 };
