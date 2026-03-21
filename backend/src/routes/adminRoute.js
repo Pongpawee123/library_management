@@ -14,6 +14,7 @@ router.patch('/borrow/:id/return', AdminController.returnBorrow);
 
 // Member Management
 router.get('/members', AdminController.getAllMembers);
+router.post('/members', AdminController.createMember);
 router.patch('/members/:id/toggle', AdminController.toggleMemberStatus);
 router.delete('/members/:id', AdminController.deleteMember);
 

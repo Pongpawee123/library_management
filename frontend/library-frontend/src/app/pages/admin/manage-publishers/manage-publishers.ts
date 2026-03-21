@@ -46,6 +46,19 @@ export class ManagePublishersComponent implements OnInit {
     }
   }
 
+  editPublisher(pub: Publisher) {
+    const newName = prompt('แก้ไขชื่อสำนักพิมพ์:', pub.name);
+    if (newName && newName.trim() !== '' && newName !== pub.name) {
+      this.publisherService.updatePublisher(pub.id, { name: newName, address: pub.address, contact: pub.contact }).subscribe({
+        next: () => {
+          this.toastService.success('อัปเดตข้อมูลสำนักพิมพ์เรียบร้อย', 'Success');
+          this.fetchPublishers();
+        },
+        error: () => this.toastService.error('ปรับปรุงไม่ได้ (อาจมีชื่อซ้ำ)', 'Error')
+      });
+    }
+  }
+
   onSubmit() {
     if (this.publisherForm.valid) {
       this.publisherService.createPublisher({

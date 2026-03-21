@@ -33,7 +33,7 @@
               <span class="text-muted"><i class="bi bi-telephone me-1"></i>{{ pub.contact }}</span>
             </td>
             <td class="text-center">
-              <button class="btn btn-icon text-primary me-1" title="แก้ไข">
+              <button class="btn btn-icon text-primary me-1" (click)="editPublisher(pub)" title="แก้ไข">
                 <i class="bi bi-pencil-square"></i>
               </button>
               <button class="btn btn-icon text-danger" (click)="deletePublisher(pub.id)" title="ลบ">

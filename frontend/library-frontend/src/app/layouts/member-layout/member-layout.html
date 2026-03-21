@@ -26,13 +26,12 @@
 
           <a class="nav-link" *ngIf="authService.getUserRole() !== 'admin'" [routerLink]="['/my-borrows']" routerLinkActive="active">My Borrowings</a>
           
-          <div class="profile-dropdown position-relative">
-            <a class="profile-link" [routerLink]="['/profile']">
+          <div class="d-flex align-items-center gap-2">
+            <a class="profile-link d-flex align-items-center" [routerLink]="['/profile']">
               <div class="avatar"><i class="bi bi-person-fill"></i></div>
               <span class="fw-semibold ms-2 d-none d-md-inline">Profile</span>
             </a>
-            <!-- Simple Logout placed directly in layout for now -->
-            <a class="nav-link text-danger ms-3" style="cursor:pointer;" (click)="logout()">
+            <a class="nav-link text-danger ms-1" style="cursor:pointer; white-space:nowrap;" (click)="logout()">
               <i class="bi bi-box-arrow-right"></i> Logout
             </a>
           </div>

@@ -45,6 +45,19 @@ export class ManageAuthorsComponent implements OnInit {
     }
   }
 
+  editAuthor(author: Author) {
+    const newName = prompt('แก้ไขชื่อผู้แต่ง:', author.name);
+    if (newName && newName.trim() !== '' && newName !== author.name) {
+      this.authorService.updateAuthor(author.id, { name: newName, bio: author.bio }).subscribe({
+        next: () => {
+          this.toastService.success('อัปเดตผู้แต่งสำเร็จ', 'Success');
+          this.fetchAuthors();
+        },
+        error: () => this.toastService.error('ปรับปรุงไม่ได้ซ้ำ', 'Error')
+      });
+    }
+  }
+
   onSubmit() {
     if (this.authorForm.valid) {
       this.authorService.createAuthor({

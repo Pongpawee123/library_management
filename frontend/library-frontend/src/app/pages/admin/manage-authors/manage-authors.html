@@ -34,7 +34,7 @@
               <span class="text-muted small">{{ author.bio || 'ไม่มีข้อมูลประวัติ' }}</span>
             </td>
             <td class="text-center">
-              <button class="btn btn-icon text-primary me-1" title="แก้ไข">
+              <button class="btn btn-icon text-primary me-1" (click)="editAuthor(author)" title="แก้ไข">
                 <i class="bi bi-pencil-fill"></i>
               </button>
               <button class="btn btn-icon text-danger" (click)="deleteAuthor(author.id)" title="ลบ">

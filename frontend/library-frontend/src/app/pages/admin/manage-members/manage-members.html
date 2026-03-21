@@ -9,7 +9,7 @@
       <div class="search-box">
         <input type="text" class="form-control rounded-pill px-4" placeholder="🔍 ค้นหาชื่อ, อีเมล...">
       </div>
-      <button class="btn btn-primary rounded-pill px-4 shadow-sm">
+      <button class="btn btn-primary rounded-pill px-4 shadow-sm" (click)="openAddModal()">
         <i class="bi bi-person-plus-fill me-2"></i> เพิ่มสมาชิก
       </button>
     </div>
@@ -20,12 +20,12 @@
       <table class="table table-hover align-middle mb-0">
         <thead class="bg-light">
           <tr>
-            <th class="px-4 py-3 text-secondary font-weight-semibold">รหัสผู้ใช้</th>
-            <th class="py-3 text-secondary font-weight-semibold">ชื่อ-นามสกุล</th>
-            <th class="py-3 text-secondary font-weight-semibold">ข้อมูลติดต่อ</th>
-            <th class="py-3 text-secondary font-weight-semibold">วันที่สมัคร</th>
-            <th class="py-3 text-secondary font-weight-semibold">สิทธิ์ / สถานะ</th>
-            <th class="px-4 py-3 text-secondary font-weight-semibold text-end">จัดการ</th>
+            <th class="px-4 py-3 text-secondary">รหัสผู้ใช้</th>
+            <th class="py-3 text-secondary">ชื่อ-นามสกุล</th>
+            <th class="py-3 text-secondary">ข้อมูลติดต่อ</th>
+            <th class="py-3 text-secondary">วันที่สมัคร</th>
+            <th class="py-3 text-secondary">สิทธิ์ / สถานะ</th>
+            <th class="px-4 py-3 text-secondary text-end">จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -45,30 +45,31 @@
             <td class="py-3 small text-muted">{{ member.joined_date | date:'mediumDate' }}</td>
             <td class="py-3">
               <div class="d-flex flex-column gap-1 align-items-start">
-                <!-- ป้าย Role -->
                 <span class="badge" [ngClass]="member.role === 'admin' ? 'bg-danger' : 'bg-info'">
                   <i class="bi" [ngClass]="member.role === 'admin' ? 'bi-shield-lock-fill' : 'bi-person-fill'"></i> {{ member.role | titlecase }}
                 </span>
-                <!-- ป้าย Status -->
                 <span class="badge rounded-pill" [ngClass]="member.status === 'Active' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
                   {{ member.status === 'Active' ? 'ใช้งานปกติ' : 'ถูกระงับ' }}
                 </span>
               </div>
             </td>
             <td class="px-4 py-3 text-end">
-              <!-- ปุ่ม Actions -->
               <button *ngIf="member.role !== 'admin'" class="btn btn-sm rounded-circle me-1" 
                       [ngClass]="member.status === 'Active' ? 'btn-outline-warning' : 'btn-outline-success'"
                       (click)="toggleStatus(member)" 
                       [title]="member.status === 'Active' ? 'ระงับการใช้งาน' : 'ปลดบล็อก'">
                 <i class="bi" [ngClass]="member.status === 'Active' ? 'bi-pause-circle' : 'bi-play-circle'"></i>
               </button>
-              
               <button *ngIf="member.role !== 'admin'" class="btn btn-sm btn-outline-danger rounded-circle" 
                       (click)="deleteMember(member.user_id, member.name)" 
                       title="ลบสมาชิก">
                 <i class="bi bi-trash3"></i>
               </button>
+            </td>
+          </tr>
+          <tr *ngIf="members.length === 0">
+            <td colspan="6" class="text-center py-5 text-muted">
+              <i class="bi bi-people fs-1 d-block mb-2"></i>ไม่พบข้อมูลสมาชิก
             </td>
           </tr>
         </tbody>
@@ -77,3 +78,64 @@
   </div>
 
 </div>
+
+<!-- ─── ADD MEMBER MODAL (Bootstrap standard) ─── -->
+<div class="modal fade" [class.show]="showAddModal" [style.display]="showAddModal ? 'block' : 'none'"
+     tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow rounded-4">
+
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">👤 เพิ่มสมาชิกใหม่</h5>
+        <button type="button" class="btn-close shadow-none" (click)="closeAddModal()"></button>
+      </div>
+
+      <form [formGroup]="addMemberForm" (ngSubmit)="onAddMemberSubmit()">
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+            <input type="text" class="form-control rounded-3" formControlName="name" placeholder="เช่น สมชาย ใจดี">
+            <div *ngIf="addMemberForm.get('name')?.invalid && addMemberForm.get('name')?.touched" class="text-danger small mt-1">
+              กรุณากรอกชื่ออย่างน้อย 2 ตัวอักษร
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">อีเมล <span class="text-danger">*</span></label>
+            <input type="email" class="form-control rounded-3" formControlName="email" placeholder="example@email.com">
+            <div *ngIf="addMemberForm.get('email')?.invalid && addMemberForm.get('email')?.touched" class="text-danger small mt-1">
+              กรุณากรอกอีเมลให้ถูกต้อง
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">รหัสผ่าน <span class="text-danger">*</span></label>
+            <input type="password" class="form-control rounded-3" formControlName="password" placeholder="อย่างน้อย 6 ตัวอักษร">
+            <div *ngIf="addMemberForm.get('password')?.invalid && addMemberForm.get('password')?.touched" class="text-danger small mt-1">
+              รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร
+            </div>
+          </div>
+
+          <div class="mb-1">
+            <label class="form-label small fw-bold text-muted">เบอร์โทรศัพท์ <span class="text-muted fw-normal">(ไม่บังคับ)</span></label>
+            <input type="tel" class="form-control rounded-3" formControlName="phone" placeholder="เช่น 08x-xxx-xxxx">
+          </div>
+
+        </div>
+
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-light rounded-pill px-4" (click)="closeAddModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary rounded-pill px-4 fw-bold"
+                  [disabled]="addMemberForm.invalid || isSubmitting">
+            <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+            {{ isSubmitting ? 'กำลังบันทึก...' : 'บันทึกสมาชิก' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showAddModal"></div>

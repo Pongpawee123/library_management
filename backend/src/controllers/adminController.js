@@ -144,5 +144,33 @@ module.exports = {
         } catch (err) {
             return response.error(res, err.message);
         }
+    },
+
+    // POST /api/admin/members — สร้างสมาชิกใหม่โดย Admin
+    async createMember(req, res) {
+        try {
+            const AuthService = require('../services/authService.js');
+            const { name, email, password, phone } = req.body;
+
+            if (!name || !email || !password) {
+                return response.badRequest(res, 'กรุณากรอก ชื่อ, อีเมล และ รหัสผ่าน');
+            }
+
+            // Reuse register logic to create users + members atomically
+            const newUser = await AuthService.register({ name, email, password });
+
+            // If phone provided, update the member record
+            if (phone) {
+                await pool.query('UPDATE members SET phone = $1 WHERE user_id = $2', [phone, newUser.id]);
+            }
+
+            return response.created(res, { id: newUser.id, email: newUser.email, name, role: 'member' });
+        } catch (err) {
+            console.error('createMember ERROR:', err);
+            if (err.code === '23505' || err.message.includes('ถูกใช้งานแล้ว')) {
+                return response.badRequest(res, 'อีเมลนี้ถูกใช้งานแล้ว');
+            }
+            return response.error(res, err.message, 400);
+        }
     }
 };
