@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthorService, Author } from '../../../services/author.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-authors',
@@ -9,35 +11,53 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
   templateUrl: './manage-authors.html',
   styleUrl: './manage-authors.scss'
 })
-export class ManageAuthorsComponent {
+export class ManageAuthorsComponent implements OnInit {
   
-  // 💡 ข้อมูลจำลองรายชื่อผู้แต่ง (Mock Data)
-  authorsList = [
-    { id: 1, name: 'ศ.ดร. สมชาย รักเรียน', bio: 'ผู้เชี่ยวชาญด้านวิทยาการคอมพิวเตอร์', bookCount: 5 },
-    { id: 2, name: 'อ.สายใจ ใฝ่รู้', bio: 'นักเขียนอิสระด้านวรรณกรรมไทย', bookCount: 12 },
-    { id: 3, name: 'Dr. John Smith', bio: 'International Guest Lecturer in Business', bookCount: 3 }
-  ];
+  authorsList: Author[] = [];
+  authorService = inject(AuthorService);
+  toastService = inject(ToastService);
 
-  // 💡 ฟอร์มสำหรับเพิ่มข้อมูลผู้แต่ง
   authorForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
     bio: new FormControl('') // ข้อมูลประวัติไม่บังคับใส่ (Optional)
   });
 
-  /* 💡 คำถามสอบ: "ทำไมถึงเลือกใช้ ID ในการลบ?"
-     💬 คำตอบ: "เพราะ ID เป็น Primary Key ที่ไม่ซ้ำกัน (Unique) ทำให้มั่นใจได้ว่าเราลบข้อมูลถูกแถวแน่นอนครับ" 
-  */
+  ngOnInit() {
+    this.fetchAuthors();
+  }
+
+  fetchAuthors() {
+    this.authorService.getAllAuthors().subscribe({
+      next: (res) => { if (res.success) this.authorsList = res.data; },
+      error: () => this.toastService.error('ดึงข้อมูลผิดพลาด', 'Error')
+    });
+  }
+
   deleteAuthor(id: number) {
     if(confirm('คุณต้องการลบข้อมูลผู้แต่งท่านนี้ใช่หรือไม่?')) {
-      this.authorsList = this.authorsList.filter(author => author.id !== id);
+      this.authorService.deleteAuthor(id).subscribe({
+        next: () => {
+          this.toastService.success('ลบผู้แต่งเรียบร้อย', 'Success');
+          this.fetchAuthors();
+        },
+        error: () => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+      });
     }
   }
 
   onSubmit() {
     if (this.authorForm.valid) {
-      console.log('ส่งข้อมูลผู้แต่ง:', this.authorForm.value);
-      alert('บันทึกข้อมูลผู้แต่งเรียบร้อย!');
-      this.authorForm.reset();
+      this.authorService.createAuthor({
+        name: this.authorForm.value.name!,
+        bio: this.authorForm.value.bio || ''
+      }).subscribe({
+        next: () => {
+          this.toastService.success('บันทึกข้อมูลผู้แต่งเรียบร้อย!', 'Success');
+          this.authorForm.reset();
+          this.fetchAuthors();
+        },
+        error: () => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+      });
     }
   }
 }

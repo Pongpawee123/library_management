@@ -5,6 +5,12 @@ const UserController = require('../controllers/userController.js');
 const authenticateToken = require('../middleware/authMiddleware.js');
 const authorize = require('../middleware/roleMiddleware.js');
 
+// GET /api/users/me — ดูข้อมูลตัวเอง และรายการยืม
+router.get('/me',
+    authenticateToken,
+    UserController.getMe
+);
+
 // GET /api/users — ดู users ทั้งหมด (admin เท่านั้น)
 router.get('/',
     authenticateToken,

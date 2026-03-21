@@ -33,7 +33,7 @@ module.exports = {
         const book = await Borrow.getBookAvailability(book_id);
         if (!book) throw new Error('ไม่พบหนังสือ');
         if (book.available_copies <= 0) {
-            throw new Error('หนังสือไม่เพียงพอ');
+            throw new Error('Book not available');
         }
 
         return await Borrow.borrow(member_id, book_id);

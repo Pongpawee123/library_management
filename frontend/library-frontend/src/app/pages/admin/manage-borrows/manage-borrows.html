@@ -29,43 +29,43 @@
             <td class="py-3">
               <div class="d-flex align-items-center gap-2">
                 <div class="avatar-circle bg-primary-subtle text-primary fw-bold">
-                  {{ record.memberName.charAt(0) }}
+                  {{ record.member_name?.charAt(0) || 'U' }}
                 </div>
-                <span>{{ record.memberName }}</span>
+                <span>{{ record.member_name }}</span>
               </div>
             </td>
-            <td class="py-3 text-dark fw-medium">{{ record.bookTitle }}</td>
+            <td class="py-3 text-dark fw-medium">{{ record.book_title }}</td>
             <td class="py-3 small">
-              <div class="text-muted"><i class="bi bi-calendar-check me-1"></i> ยืม: {{ record.borrowDate }}</div>
-              <div class="text-danger mt-1"><i class="bi bi-calendar-x me-1"></i> คืน: {{ record.dueDate }}</div>
+              <div class="text-muted"><i class="bi bi-calendar-check me-1"></i> ยืม: {{ record.borrowed_at | date:'mediumDate' }}</div>
+              <div class="text-danger mt-1"><i class="bi bi-calendar-x me-1"></i> คืน: {{ record.due_date | date:'mediumDate' }}</div>
             </td>
             <td class="py-3">
               <!-- ป้ายสถานะ -->
               <span class="badge rounded-pill px-3 py-2"
                 [ngClass]="{
-                  'bg-warning text-dark': record.status === 'Pending',
-                  'bg-primary': record.status === 'Borrowed',
-                  'bg-danger': record.status === 'Overdue',
-                  'bg-success': record.status === 'Returned'
+                  'bg-warning text-dark': record.status === 'pending',
+                  'bg-primary': record.status === 'borrowed',
+                  'bg-danger': record.status === 'overdue',
+                  'bg-success': record.status === 'returned'
                 }">
                 {{ 
-                  record.status === 'Pending' ? 'รออนุมัติ' : 
-                  record.status === 'Borrowed' ? 'กำลังยืม' : 
-                  record.status === 'Overdue' ? 'เลยกำหนด' : 'คืนแล้ว' 
+                  record.status === 'pending' ? 'รออนุมัติ' : 
+                  record.status === 'borrowed' ? 'กำลังยืม' : 
+                  record.status === 'overdue' ? 'เลยกำหนด' : 'คืนแล้ว' 
                 }}
               </span>
             </td>
             <td class="px-4 py-3 text-end">
               <!-- ปุ่ม Actions แสดงตามสถานะ -->
-              <button *ngIf="record.status === 'Pending'" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" (click)="approveBorrow(record)">
+              <button *ngIf="record.status === 'pending'" class="btn btn-sm btn-success rounded-pill px-3 shadow-sm" (click)="approveBorrow(record)">
                 <i class="bi bi-check2"></i> อนุมัติ
               </button>
               
-              <button *ngIf="record.status === 'Borrowed' || record.status === 'Overdue'" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="returnBook(record)">
+              <button *ngIf="record.status === 'borrowed' || record.status === 'overdue'" class="btn btn-sm btn-outline-primary rounded-pill px-3" (click)="returnBook(record)">
                 <i class="bi bi-arrow-return-left"></i> รับคืน
               </button>
               
-              <span *ngIf="record.status === 'Returned'" class="text-muted small">
+              <span *ngIf="record.status === 'returned'" class="text-muted small">
                 <i class="bi bi-check-circle-fill text-success"></i> เสร็จสิ้น
               </span>
             </td>

@@ -1,58 +1,105 @@
-<div class="dashboard-card shadow-sm fade-in">
-  <h3 class="fw-bold mb-2">แดชบอร์ด</h3>
-  <p class="text-muted mb-4">ภาพรวมสถิติข้อมูลภายในระบบห้องสมุด</p>
-
-  <div class="row g-4">
-    
-    <div class="col-md-4">
-      <div class="stat-card stat-purple shadow-sm">
-        <div class="stat-title">หนังสือทั้งหมด</div>
-        <div class="stat-value">{{ stats.totalBooks | number }}</div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="stat-card stat-green shadow-sm">
-        <div class="stat-title">สมาชิกทั้งหมด</div>
-        <div class="stat-value">{{ stats.totalMembers | number }}</div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="stat-card stat-pink shadow-sm">
-        <div class="stat-title">กำลังยืมอยู่</div>
-        <div class="stat-value">{{ stats.activeBorrows }}</div>
-      </div>
-    </div>
-    
+<div class="admin-dashboard fade-in">
+  
+  <div class="dashboard-header">
+    <h1 class="title">Overview</h1>
+    <p class="subtitle">Live statistics from the PostgreSQL database.</p>
   </div>
 
-  <div class="mt-5">
-    <h5 class="fw-bold mb-3">📝 กิจกรรมล่าสุด</h5>
-    <div class="table-responsive">
-      <table class="table table-hover align-middle">
-        <thead class="table-light">
+  <!-- Global Error State -->
+  <div *ngIf="hasError" class="alert apple-alert alert-danger shadow-sm">
+    <i class="bi bi-exclamation-circle-fill me-2"></i>
+    Failed to load dashboard data. Ensure backend is running.
+    <button class="btn btn-sm btn-outline-danger ms-3 rounded-pill" (click)="fetchDashboardData()">Retry</button>
+  </div>
+
+  <!-- KPI Cards (Loading) -->
+  <div *ngIf="isLoadingSummary" class="kpi-grid">
+    <div class="kpi-card skeleton" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <!-- KPI Cards (Data) -->
+  <div *ngIf="!isLoadingSummary && summary" class="kpi-grid">
+    <div class="kpi-card text-blue">
+      <div class="kpi-icon"><i class="bi bi-journals"></i></div>
+      <div class="kpi-content">
+        <h3>{{ summary.total_books }}</h3>
+        <p>Total Books</p>
+      </div>
+    </div>
+    
+    <div class="kpi-card text-purple">
+      <div class="kpi-icon"><i class="bi bi-people"></i></div>
+      <div class="kpi-content">
+        <h3>{{ summary.active_members }}</h3>
+        <p>Active Members</p>
+      </div>
+    </div>
+
+    <div class="kpi-card text-orange">
+      <div class="kpi-icon"><i class="bi bi-bookmark-check"></i></div>
+      <div class="kpi-content">
+        <h3>{{ summary.active_borrows }}</h3>
+        <p>Currently Borrowed</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="recent-activity-section mt-5">
+    <h3 class="section-title mb-4">Borrowing Management</h3>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoadingBorrows" class="text-center py-5 text-muted">
+      <div class="spinner-border spinner-border-sm me-2"></div> Loading records...
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!isLoadingBorrows && recentBorrows.length === 0" class="empty-state">
+      <i class="bi bi-inbox text-muted"></i>
+      <p>No borrowing activity found.</p>
+    </div>
+
+    <!-- Data Table -->
+    <div class="apple-table-wrapper" *ngIf="!isLoadingBorrows && recentBorrows.length > 0">
+      <table class="apple-table">
+        <thead>
           <tr>
-            <th>ผู้ใช้งาน</th>
-            <th>หนังสือ</th>
-            <th>วันที่</th>
-            <th>สถานะ</th>
+            <th>Member</th>
+            <th>Book Title</th>
+            <th>Borrowed At</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of recentActivities">
-            <td class="fw-bold text-primary">{{ item.member }}</td>
-            <td>{{ item.book }}</td>
-            <td class="text-muted">{{ item.date }}</td>
+          <tr *ngFor="let record of recentBorrows">
+            <td class="fw-semibold">{{ record.member_name }}</td>
+            <td class="text-muted">{{ record.book_title }}</td>
+            <td>{{ record.borrowed_at | date:'mediumDate' }}</td>
+            <td>{{ record.due_date | date:'mediumDate' }}</td>
             <td>
-              <span class="badge rounded-pill" 
-                    [ngClass]="item.status === 'คืนแล้ว' ? 'bg-success' : 'bg-warning text-dark'">
-                {{ item.status }}
+              <span class="status-pill" [ngClass]="record.status">
+                {{ record.status }}
               </span>
+            </td>
+            <td>
+              <button class="btn btn-sm btn-outline-success border-0 me-2" 
+                      *ngIf="record.status === 'pending'"
+                      (click)="approve(record.id)">
+                <i class="bi bi-check-circle"></i> Approve
+              </button>
+              <button class="btn btn-sm btn-outline-primary border-0" 
+                      *ngIf="record.status === 'borrowed' || record.status === 'overdue'"
+                      (click)="returnBook(record.id)">
+                <i class="bi bi-arrow-return-left"></i> Return
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+
   </div>
+
 </div>

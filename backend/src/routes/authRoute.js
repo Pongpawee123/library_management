@@ -6,6 +6,7 @@ const authenticateToken = require('../middleware/authMiddleware.js');
 
 // ไม่ต้อง Token
 router.post('/login',    AccountController.login);
+router.post('/register', AccountController.register);
 
 // ต้อง Token
 router.get('/profile',   authenticateToken, AccountController.getProfile);

@@ -31,7 +31,7 @@ module.exports = {
         return book;
     },
     // แก้ไขหนังสือ
-    async updateBook(id, { title, isbn, publisher_id, total_copies }) {
+    async updateBook(id, { title, isbn, publisher_id, total_copies, available_copies }) {
 
         // เช็คว่ามีหนังสือนี้ไหม
         const existing = await Book.getById(id);
@@ -41,7 +41,7 @@ module.exports = {
         if (!title) throw new Error('กรุณากรอกชื่อหนังสือ');
 
         const book = await Book.update(id, { 
-            title, isbn, publisher_id, total_copies 
+            title, isbn, publisher_id, total_copies, available_copies 
         });
 
         return book;

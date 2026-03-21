@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-borrows',
@@ -8,25 +10,39 @@ import { CommonModule } from '@angular/common';
   templateUrl: './manage-borrows.html',
   styleUrl: './manage-borrows.scss'
 })
-export class ManageBorrowsComponent {
-  
-  // 💡 ข้อมูลจำลอง (Mock Data) รายการยืม-คืน
-  borrowRecords = [
-    { id: 'BR-001', memberName: 'สมปอง รักดี', bookTitle: 'Angular 18 Essentials', borrowDate: '2026-03-15', dueDate: '2026-03-22', status: 'Pending' },
-    { id: 'BR-002', memberName: 'มาลี สวยมาก', bookTitle: 'Database Systems', borrowDate: '2026-03-10', dueDate: '2026-03-17', status: 'Borrowed' },
-    { id: 'BR-003', memberName: 'จอห์น ดอย', bookTitle: 'UI/UX Design 2026', borrowDate: '2026-03-01', dueDate: '2026-03-08', status: 'Overdue' },
-    { id: 'BR-004', memberName: 'สมหญิง จริงใจ', bookTitle: 'Fullstack Web Dev', borrowDate: '2026-03-12', dueDate: '2026-03-19', status: 'Returned' }
-  ];
+export class ManageBorrowsComponent implements OnInit {
+  borrowRecords: any[] = [];
+  adminService = inject(AdminService);
+  toastService = inject(ToastService);
 
-  // 💡 ฟังก์ชันอนุมัติการยืม
-  approveBorrow(record: any) {
-    record.status = 'Borrowed';
-    alert(`อนุมัติการยืมหนังสือให้ ${record.memberName} เรียบร้อยแล้ว!`);
+  ngOnInit() {
+    this.fetchBorrows();
   }
 
-  // 💡 ฟังก์ชันรับคืนหนังสือ
+  fetchBorrows() {
+    this.adminService.getBorrowings().subscribe({
+      next: (res) => { if (res.success) this.borrowRecords = res.data; },
+      error: (err) => { this.toastService.error('ดึงข้อมูลผิดพลาด', 'Error'); }
+    });
+  }
+
+  approveBorrow(record: any) {
+    this.adminService.approveBorrow(record.id).subscribe({
+      next: () => {
+        this.toastService.success('อนุมัติการยืมเรียบร้อย!', 'Success');
+        this.fetchBorrows();
+      },
+      error: () => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+    });
+  }
+
   returnBook(record: any) {
-    record.status = 'Returned';
-    alert(`รับคืนหนังสือจาก ${record.memberName} เรียบร้อยแล้ว!`);
+    this.adminService.returnBorrow(record.id).subscribe({
+      next: () => {
+        this.toastService.success('รับคืนหนังสือเรียบร้อย!', 'Success');
+        this.fetchBorrows();
+      },
+      error: () => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+    });
   }
 }

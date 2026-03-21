@@ -1,57 +1,188 @@
-/* 💡 คำถามสอบ: "การใช้ SCSS แบบ Nesting (เขียนซ้อนข้างใน) มีข้อดียังไง?"
-     💬 คำตอบ: "ช่วยให้โค้ดอ่านง่ายขึ้นและเป็นการระบุ Scope ของ Style ให้ชัดเจน 
-     เช่น .stat-title ที่อยู่ข้างใน .stat-card จะไม่ไปกระทบกับคลาสชื่อเดียวกันในหน้าอื่นครับ" 
-*/
-.dashboard-card {
-  background: white;
-  border-radius: 20px;
-  padding: 30px;
+/* Apple-style Admin Dashboard styles */
+$text-main: #1d1d1f;
+$text-muted: #86868b;
+$card-bg: #ffffff;
+$shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.04);
+$shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+.admin-dashboard {
+  padding: 30px 40px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: $text-main;
 }
 
-.stat-card {
-  border-radius: 16px;
-  padding: 24px;
-  color: white;
-  height: 100%;
-  transition: transform 0.3s ease; /* ตั้งค่าความเร็วในการขยับเวลาเอาเมาส์ชี้ */
+.dashboard-header {
+  margin-bottom: 35px;
+  .title {
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0 0 5px 0;
+    letter-spacing: -0.02em;
+  }
+  .subtitle {
+    font-size: 16px;
+    color: $text-muted;
+    margin: 0;
+  }
+}
+
+.apple-alert {
+  border-radius: 12px;
+  border: none;
+  font-weight: 500;
+}
+
+/* KPI Grid */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.kpi-card {
+  background: $card-bg;
+  border-radius: 20px;
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  box-shadow: $shadow-soft;
+  transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: translateY(-5px); /* เลื่อนขึ้น 5px เมื่อเอาเมาส์มาวาง (Hover Effect) */
+    transform: translateY(-3px);
+    box-shadow: $shadow-hover;
   }
 
-  .stat-title {
-    font-size: 0.9rem;
+  &.skeleton {
+    height: 100px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .kpi-icon {
+    font-size: 40px;
+    margin-right: 20px;
+    opacity: 0.8;
+  }
+
+  .kpi-content {
+    h3 {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      line-height: 1;
+    }
+    p {
+      font-size: 14px;
+      color: $text-muted;
+      font-weight: 500;
+      margin: 5px 0 0 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  /* Accents */
+  &.text-blue { color: #007aff; }
+  &.text-purple { color: #af52de; }
+  &.text-orange { color: #ff9500; }
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Apple-style Table */
+.apple-table-wrapper {
+  background: $card-bg;
+  border-radius: 20px;
+  padding: 20px 30px;
+  box-shadow: $shadow-soft;
+  overflow-x: auto;
+}
+
+.apple-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    padding: 15px 10px;
+    color: $text-muted;
     font-weight: 600;
-    margin-bottom: 10px;
-    opacity: 0.9;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #f2f2f7;
   }
 
-  .stat-value {
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1;
+  td {
+    padding: 15px 10px;
+    font-size: 15px;
+    border-bottom: 1px solid #f2f2f7;
+    vertical-align: middle;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
   }
 }
 
-/* สีไล่ระดับของการ์ด (Gradient Colors) */
-.stat-purple {
-  background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);
+.status-pill {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &.borrowed {
+    background: rgba(255, 149, 0, 0.15);
+    color: #cc7700;
+  }
+  &.returned {
+    background: rgba(52, 199, 89, 0.15);
+    color: #248a3d;
+  }
+  &.overdue {
+    background: rgba(255, 59, 48, 0.15);
+    color: #c93429;
+  }
 }
 
-.stat-green {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+/* Empty State */
+.empty-state {
+  background: $card-bg;
+  border-radius: 20px;
+  text-align: center;
+  padding: 60px 20px;
+  box-shadow: $shadow-soft;
+  
+  i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    display: block;
+  }
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
 }
 
-.stat-pink {
-  background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-/* อนิเมชัน Fade In ตอนเปิดหน้าจอ */
 .fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(15px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }

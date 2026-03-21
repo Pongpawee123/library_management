@@ -15,9 +15,8 @@
       <thead class="bg-light">
         <tr>
           <th class="ps-4" width="10%">ID</th>
-          <th width="60%">ชื่อหมวดหมู่</th>
-          <th class="text-center" width="15%">จำนวนหนังสือ</th>
-          <th class="text-center" width="15%">จัดการ</th>
+          <th width="70%">ชื่อหมวดหมู่</th>
+          <th class="text-center" width="20%">จัดการ</th>
         </tr>
       </thead>
       <tbody>
@@ -30,12 +29,7 @@
             </div>
           </td>
           <td class="text-center">
-            <span class="badge bg-primary-subtle text-primary rounded-pill px-3">
-              {{ cat.bookCount }} เล่ม
-            </span>
-          </td>
-          <td class="text-center">
-            <button class="btn btn-icon text-primary me-1" title="แก้ไข">
+            <button class="btn btn-icon text-primary me-1" (click)="editCategory(cat)" title="แก้ไข">
               <i class="bi bi-pencil-square"></i>
             </button>
             <button class="btn btn-icon text-danger" (click)="deleteCategory(cat.id)" title="ลบ">

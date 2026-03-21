@@ -84,6 +84,19 @@ module.exports = {
 
     // ยืมหนังสือ
     async borrow(member_id, book_id) {
+        
+        // Checklist explicit pre-transaction duplicate check
+        const checkResult = await pool.query(`
+            SELECT * FROM borrow_records
+            WHERE member_id = $1
+            AND book_id = $2
+            AND returned_at IS NULL;
+        `, [member_id, book_id]);
+
+        if (checkResult.rows.length > 0) {
+            throw new Error('You already borrowed this book');
+        }
+
         const client = await pool.connect();
         try {
             await client.query('BEGIN');

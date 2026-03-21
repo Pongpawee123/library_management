@@ -9,6 +9,11 @@ router.get('/',
     authorize('admin', 'librarian'),
     BorrowController.getAllBorrows
 );
+router.get('/my',
+    authenticateToken,
+    BorrowController.getMyBorrows
+);
+
 router.get('/member/:member_id',
     authenticateToken,
     authorize('admin', 'librarian'),
@@ -21,7 +26,6 @@ router.get('/:id',
 );
 router.post('/',
     authenticateToken,
-    authorize('admin', 'librarian'),
     BorrowController.borrowBook
 );
 router.put('/:id/return',

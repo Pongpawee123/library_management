@@ -19,6 +19,21 @@ module.exports = {
         }
     },
 
+    // POST /api/auth/register — สมัครสมาชิกใหม่
+    async register(req, res) {
+        try {
+            const result = await AuthService.register({
+                name: req.body.name,
+                email: req.body.email,
+                password: req.body.password
+            });
+            return response.created(res, result);
+        } catch (err) {
+            console.error('register ERROR:', err);
+            return response.error(res, err.message, 400);
+        }
+    },
+
     // GET /api/auth/profile — ดูโปรไฟล์ตัวเอง
     async getProfile(req, res) {
         try {

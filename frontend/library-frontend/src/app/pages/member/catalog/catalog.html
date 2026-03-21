@@ -1,53 +1,60 @@
-<div class="catalog-container fade-in">
+<div class="apple-container fade-in">
   
-  <!-- ส่วนหัวและช่องค้นหา -->
-  <div class="row align-items-center mb-5">
-    <div class="col-lg-6">
-      <h2 class="fw-bold text-dark mb-1">📚 คลังหนังสือ</h2>
-      <p class="text-muted">สำรวจและเลือกยืมหนังสือที่คุณสนใจจากหมวดหมู่ต่างๆ</p>
+  <!-- Header Section -->
+  <div class="apple-header">
+    <div class="header-text">
+      <h1 class="title">Discover</h1>
+      <p class="subtitle">Explore the library collection seamlessly.</p>
     </div>
-    <div class="col-lg-6">
-      <div class="search-wrapper shadow-sm bg-white rounded-pill px-3 py-2 d-flex align-items-center">
-        <i class="bi bi-search text-muted me-2"></i>
-        <input type="text" class="form-control border-0 shadow-none bg-transparent" placeholder="ค้นหาชื่อหนังสือ, ผู้แต่ง, หรือหมวดหมู่...">
-      </div>
+    <div class="search-box">
+      <i class="bi bi-search"></i>
+      <input type="text" placeholder="Search books, authors, categories...">
     </div>
   </div>
 
-  <!-- กริดแสดงการ์ดหนังสือ -->
-  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="state-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading collection...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError && !isLoading" class="state-container text-danger">
+    <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+    <p class="mt-3">Failed to load books. Please check your connection to the server.</p>
+    <button class="apple-btn outline mt-2" (click)="fetchBooks()">Try Again</button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && !hasError && books.length === 0" class="state-container">
+    <i class="bi bi-journal-x" style="font-size: 2rem;"></i>
+    <p class="mt-3 text-muted">No books currently available.</p>
+  </div>
+
+  <!-- Catalog Grid -->
+  <div *ngIf="!isLoading && !hasError && books.length > 0" class="apple-grid">
     
-    <div class="col" *ngFor="let book of books">
-      <div class="card h-100 book-card border-0 shadow-sm overflow-hidden">
-        
-        <!-- 🖼️ แก้ไขแล้ว: ส่วนแสดงรูปปกหนังสือ -->
-        <div class="book-cover-bg d-flex align-items-center justify-content-center position-relative" style="height: 220px; background-color: #f8f9fc;">
-          
-          <!-- ใช้แท็ก img ดึงรูปจาก imageUrl พร้อมใส่เงาให้ดู 3 มิติ -->
-          <img [src]="book.imageUrl" [alt]="book.title" 
-               style="max-height: 150px; width: auto; object-fit: contain; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.15)); transition: transform 0.3s ease;"
-               class="book-image-hover">
-          
-          <!-- ป้ายสถานะ (จัดให้อยู่มุมขวาบนของการ์ดรูป) -->
-          <div class="position-absolute top-0 end-0 m-3 badge rounded-pill px-3 py-2 shadow-sm" 
-               [ngClass]="book.status === 'Available' ? 'bg-success' : 'bg-danger'">
-            {{ book.status === 'Available' ? 'พร้อมยืม' : 'ถูกยืมแล้ว' }}
-          </div>
+    <div class="apple-card" *ngFor="let book of books" [routerLink]="['/book-detail', book.id]">
+      
+      <!-- Cover Image Area -->
+      <div class="card-image-wrapper">
+        <img [src]="book.cover_image || 'https://via.placeholder.com/150'" 
+             (error)="$any($event.target).src = 'https://via.placeholder.com/150'"
+             [alt]="book.title" class="book-cover">
+        <div class="availability-badge" [class.available]="book.available_copies > 0">
+          {{ book.available_copies > 0 ? 'Available' : 'Borrowed' }}
         </div>
-
-        <!-- รายละเอียดหนังสือ -->
-        <div class="card-body p-4 d-flex flex-column">
-          <div class="text-primary small fw-bold mb-1">{{ book.category }}</div>
-          <h5 class="card-title fw-bold text-dark mb-2 text-truncate" [title]="book.title">{{ book.title }}</h5>
-          <p class="card-text text-muted small mb-4">โดย: {{ book.author }}</p>
-          
-          <!-- ปุ่มดูรายละเอียด (ดันลงล่างสุดอัตโนมัติด้วย mt-auto) -->
-          <a [routerLink]="['/book-detail', book.id]" class="btn btn-primary w-100 rounded-pill fw-bold shadow-sm mt-auto">
-            ดูรายละเอียด
-          </a>
-        </div>
-
       </div>
+
+      <!-- Content Area -->
+      <div class="card-content">
+        <div class="category-tag">{{ book.categories?.[0] || 'Uncategorized' }}</div>
+        <h3 class="book-title">{{ book.title }}</h3>
+        <p class="book-author">{{ book.authors?.join(', ') || 'Unknown Author' }}</p>
+      </div>
+
     </div>
 
   </div>

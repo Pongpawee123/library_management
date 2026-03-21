@@ -1,47 +1,88 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common'; 
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { BookService, Book } from '../../../services/book.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-books',
   standalone: true,
-  // 💡 คำถามสอบ: "ทำไมต้องใส่ CommonModule และ ReactiveFormsModule?"
-  // 💬 คำตอบ: "CommonModule เพื่อให้ใช้ *ngFor และ [ngClass] ได้ ส่วน ReactiveFormsModule เพื่อใช้จัดการฟอร์มเพิ่มหนังสือครับ"
   imports: [CommonModule, ReactiveFormsModule], 
-  templateUrl: './manage-books.html', // 👈 เช็คจุดนี้: ชื่อไฟล์ HTML ต้องตรงกับที่มีอยู่จริง
-  styleUrl: './manage-books.scss'     // 👈 เช็คจุดนี้: ชื่อไฟล์ SCSS ต้องตรงกับที่มีอยู่จริง
+  templateUrl: './manage-books.html',
+  styleUrl: './manage-books.scss'
 })
-export class ManageBooksComponent { // 👈 เช็คจุดนี้: ชื่อคลาสต้องเป็น ManageBooksComponent เท่านั้น
+export class ManageBooksComponent implements OnInit {
   
-  // 💡 ข้อมูลจำลอง (Mock Data) ล้อตามตาราง books ใน Database
-  booksList = [
-    { id: 1, title: 'การเขียนโปรแกรมด้วย Angular 18', isbn: '978-616-123-456', publisher: 'RMUTT Press', total: 10, available: 8, status: 'available' },
-    { id: 2, title: 'เจาะลึก Database Systems', isbn: '978-616-987-654', publisher: 'Tech Book', total: 5, available: 0, status: 'out_of_stock' },
-    { id: 3, title: 'การออกแบบ UI/UX เบื้องต้น', isbn: '978-616-111-222', publisher: 'Design Studio', total: 15, available: 15, status: 'available' }
-  ];
+  booksList: Book[] = [];
+  bookService = inject(BookService);
+  toastService = inject(ToastService);
 
-  // 💡 สร้างฟอร์มสำหรับเพิ่มหนังสือ
   bookForm = new FormGroup({
     title: new FormControl('', Validators.required),
     isbn: new FormControl('', Validators.required),
-    publisher: new FormControl('', Validators.required),
+    publisher: new FormControl('', Validators.required), // Actually this requires real relation maps in the backend, but we send as simple mapping
     totalCopies: new FormControl(1, [Validators.required, Validators.min(1)])
   });
 
-  // 💡 ฟังก์ชันบันทึกข้อมูล
+  ngOnInit() {
+    this.fetchBooks();
+  }
+
+  fetchBooks() {
+    this.bookService.getAllBooks().subscribe({
+      next: (res) => { if (res.success) this.booksList = res.data; },
+      error: () => this.toastService.error('ดึงข้อมูลผิดพลาด', 'Error')
+    });
+  }
+
   onSubmit() {
     if (this.bookForm.valid) {
-      console.log('Form Data:', this.bookForm.value);
-      alert('บันทึกสำเร็จ!');
-      this.bookForm.reset({ totalCopies: 1 });
+      this.bookService.createBook({
+        title: this.bookForm.value.title,
+        isbn: this.bookForm.value.isbn,
+        publisher_id: Number(this.bookForm.value.publisher) || null, // Assuming numerical mapping if supported, else text
+        total_copies: this.bookForm.value.totalCopies
+      }).subscribe({
+        next: () => {
+          this.toastService.success('บันทึกหนังสือสำเร็จ!', 'Success');
+          this.bookForm.reset({ totalCopies: 1 });
+          this.fetchBooks();
+        },
+        error: () => this.toastService.error('บันทึกหนังสือไม่สำเร็จ (เช็คข้อมูล)', 'Error')
+      });
     }
   }
 
-  // 💡 ฟังก์ชันลบหนังสือ (ใช้ตอบอาจารย์เรื่อง Event Binding)
   deleteBook(id: number) {
     if(confirm('คุณแน่ใจใช่ไหมที่จะลบหนังสือเล่มนี้?')) {
-      // ใช้ Filter เพื่อสร้าง Array ใหม่ที่ไม่มี ID ที่เราสั่งลบ
-      this.booksList = this.booksList.filter(book => book.id !== id);
+      this.bookService.deleteBook(id).subscribe({
+        next: () => {
+          this.toastService.success('ลบหนังสือสำเร็จ', 'Success');
+          this.fetchBooks();
+        },
+        error: () => this.toastService.error('ล้มเหลว', 'Error')
+      });
     }
+  }
+
+  editBook(book: Book) {
+    const newTitle = prompt('แก้ไขชื่อหนังสือ:', book.title);
+    if (newTitle === null) return;
+    
+    const newIsbn = prompt('แก้ไข ISBN:', book.isbn);
+    if (newIsbn === null) return;
+
+    this.bookService.updateBook(book.id, {
+      title: newTitle,
+      isbn: newIsbn,
+      total_copies: book.total_copies, 
+      available_copies: book.available_copies
+    }).subscribe({
+      next: () => {
+        this.toastService.success('อัปเดตหนังสือสำเร็จ', 'Success');
+        this.fetchBooks();
+      },
+      error: () => this.toastService.error('อัปเดตไม่สำเร็จ (เช็คข้อมูล)', 'Error')
+    });
   }
 }

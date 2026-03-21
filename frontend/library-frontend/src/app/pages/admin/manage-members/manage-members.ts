@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-members',
@@ -8,27 +10,44 @@ import { CommonModule } from '@angular/common';
   templateUrl: './manage-members.html',
   styleUrl: './manage-members.scss'
 })
-export class ManageMembersComponent {
-  
-  // 💡 ข้อมูลจำลอง (Mock Data) สมาชิกในระบบ
-  members = [
-    { id: 'MEM-001', name: 'สมปอง รักดี', email: 'sompong@email.com', role: 'Member', status: 'Active', joinedDate: '2026-01-15' },
-    { id: 'MEM-002', name: 'มาลี สวยมาก', email: 'malee@email.com', role: 'Member', status: 'Inactive', joinedDate: '2026-02-10' },
-    { id: 'ADM-001', name: 'โคดี้ กัคโป', email: 'admin@library.com', role: 'Admin', status: 'Active', joinedDate: '2025-12-01' },
-    { id: 'MEM-003', name: 'จอห์น ดอย', email: 'john@email.com', role: 'Member', status: 'Active', joinedDate: '2026-03-05' }
-  ];
+export class ManageMembersComponent implements OnInit {
+  members: any[] = [];
+  adminService = inject(AdminService);
+  toastService = inject(ToastService);
 
-  // 💡 ฟังก์ชันระงับ/ปลดระงับการใช้งาน
-  toggleStatus(member: any) {
-    member.status = member.status === 'Active' ? 'Inactive' : 'Active';
-    const action = member.status === 'Active' ? 'ปลดบล็อก' : 'ระงับการใช้งาน';
-    alert(`${action} สมาชิก: ${member.name} เรียบร้อยแล้ว!`);
+  ngOnInit() {
+    this.fetchMembers();
   }
 
-  // 💡 ฟังก์ชันลบสมาชิก
+  fetchMembers() {
+    this.adminService.getMembers().subscribe({
+      next: (res) => { if (res.success) this.members = res.data; },
+      error: () => this.toastService.error('ดึงข้อมูลสมาชิกล้มเหลว', 'Error')
+    });
+  }
+
+  toggleStatus(member: any) {
+    this.adminService.toggleMemberStatus(member.user_id).subscribe({
+      next: (res) => {
+        if (res.success) {
+          const action = res.data.status === 'Active' ? 'ปลดบล็อก' : 'ระงับการใช้งาน';
+          this.toastService.success(`${action} สมาชิกเรียบร้อยแล้ว!`, 'Success');
+          this.fetchMembers();
+        }
+      },
+      error: () => this.toastService.error('เกิดข้อผิดพลาดในการปรับสถานะ', 'Error')
+    });
+  }
+
   deleteMember(id: string, name: string) {
     if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลของ ${name}?`)) {
-      this.members = this.members.filter(m => m.id !== id);
+      this.adminService.deleteMember(id).subscribe({
+        next: () => {
+          this.toastService.success('ลบข้อมูลสมาชิกสำเร็จ', 'Success');
+          this.fetchMembers();
+        },
+        error: () => this.toastService.error('ล้มเหลว ลบข้อมูลไม่ได้', 'Error')
+      });
     }
   }
 }

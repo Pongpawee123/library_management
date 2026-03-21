@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AdminService } from '../../../services/admin.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -8,20 +10,76 @@ import { CommonModule } from '@angular/common';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss'
 })
-export class AdminDashboardComponent {
-  // 💡 Mock Data (ข้อมูลสมมติ) 
-  // สอบตอบอาจารย์: "ในขั้นตอนพัฒนาเราจะจำลองข้อมูลขึ้นมาก่อน เพื่อออกแบบ UI ให้สมบูรณ์ 
-  // ก่อนจะเปลี่ยนไปดึงข้อมูลจริงจาก Backend ด้วยคำสั่ง COUNT(*) ใน SQL ครับ"
-  stats = {
-    totalBooks: 1250,
-    totalMembers: 450,
-    activeBorrows: 85,
-    overdueBooks: 12
-  };
+export class AdminDashboardComponent implements OnInit {
+  summary: any = null;
+  recentBorrows: any[] = [];
+  
+  isLoadingSummary = true;
+  isLoadingBorrows = true;
+  hasError = false;
 
-  recentActivities = [
-    { member: 'อาทฤต ทองไพบูลย์', book: 'Angular สำหรับมือใหม่', date: '2026-03-12', status: 'ยืมแล้ว' },
-    { member: 'สมชาย รักเรียน', book: 'Database Systems', date: '2026-03-11', status: 'คืนแล้ว' },
-    { member: 'ใจดี มีสุข', book: 'UX/UX Design', date: '2026-03-10', status: 'เกินกำหนด' }
-  ];
+  private adminService = inject(AdminService);
+  private toastService = inject(ToastService);
+
+  ngOnInit() {
+    this.fetchDashboardData();
+  }
+
+  fetchDashboardData() {
+    this.hasError = false;
+    
+    // Fetch Summary Cards
+    this.adminService.getDashboardData().subscribe({
+      next: (res) => {
+        if (res.success) this.summary = res.data;
+        this.isLoadingSummary = false;
+      },
+      error: (err) => {
+        console.error('Summary Error:', err);
+        this.hasError = true;
+        this.isLoadingSummary = false;
+      }
+    });
+
+    this.fetchBorrows();
+  }
+
+  fetchBorrows() {
+    // Fetch Recent Activity Table
+    this.adminService.getBorrowings().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.recentBorrows = res.data;
+        }
+        this.isLoadingBorrows = false;
+      },
+      error: (err) => {
+        console.error('Borrows Error:', err);
+        this.hasError = true;
+        this.isLoadingBorrows = false;
+      }
+    });
+  }
+
+  approve(id: number) {
+    this.adminService.approveBorrow(id).subscribe({
+      next: () => {
+        this.toastService.success('อนุมัติสำเร็จ', 'Success');
+        this.fetchBorrows();
+        this.fetchDashboardData();
+      },
+      error: (err) => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+    });
+  }
+
+  returnBook(id: number) {
+    this.adminService.returnBorrow(id).subscribe({
+      next: () => {
+        this.toastService.success('คืนหนังสือสำเร็จ', 'Success');
+        this.fetchBorrows();
+        this.fetchDashboardData();
+      },
+      error: (err) => this.toastService.error('เกิดข้อผิดพลาด', 'Error')
+    });
+  }
 }

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { CategoryService, Category } from '../../../services/category.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-categories',
@@ -9,36 +11,62 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
   templateUrl: './manage-categories.html',
   styleUrl: './manage-categories.scss'
 })
-export class ManageCategoriesComponent {
+export class ManageCategoriesComponent implements OnInit {
   
-  // 💡 Mock Data สำหรับตาราง Categories
-  categoriesList = [
-    { id: 1, name: 'คอมพิวเตอร์และเทคโนโลยี', bookCount: 45 },
-    { id: 2, name: 'วรรณกรรมและนิยาย', bookCount: 120 },
-    { id: 3, name: 'ประวัติศาสตร์', bookCount: 32 },
-    { id: 4, name: 'บริหารธุรกิจ', bookCount: 18 }
-  ];
+  categoriesList: Category[] = [];
+  categoryService = inject(CategoryService);
+  toastService = inject(ToastService);
 
-  // 💡 ฟอร์มสำหรับเพิ่ม/แก้ไขหมวดหมู่
   categoryForm = new FormGroup({
     categoryName: new FormControl('', [Validators.required, Validators.minLength(2)])
   });
 
-  /* 💡 คำถามสอบ: "ฟังก์ชัน deleteCategory ทำงานอย่างไร?"
-     💬 คำตอบ: "ใช้หลักการ Event Binding เพื่อรับ ID มา แล้วใช้ฟังก์ชัน filter ของ Array 
-     ในการคัดข้อมูลที่ ID ไม่ตรงกับที่ระบุออก เพื่อจำลองการลบข้อมูลครับ" 
-  */
+  ngOnInit() {
+    this.fetchCategories();
+  }
+
+  fetchCategories() {
+    this.categoryService.getAllCategories().subscribe({
+      next: (res) => { if (res.success) this.categoriesList = res.data; },
+      error: () => this.toastService.error('ดึงข้อมูลผิดพลาด', 'Error')
+    });
+  }
+
   deleteCategory(id: number) {
     if(confirm('ยืนยันการลบหมวดหมู่นี้? (หนังสือในหมวดนี้อาจจะไม่มีหมวดหมู่)')) {
-      this.categoriesList = this.categoriesList.filter(cat => cat.id !== id);
+      this.categoryService.deleteCategory(id).subscribe({
+        next: () => {
+          this.toastService.success('ลบหมวดหมู่สำเร็จ', 'Success');
+          this.fetchCategories();
+        },
+        error: () => this.toastService.error('ล้มเหลว', 'Error')
+      });
+    }
+  }
+
+  editCategory(cat: Category) {
+    const newName = prompt('แก้ไขชื่อหมวดหมู่:', cat.name);
+    if (newName && newName.trim() !== '' && newName !== cat.name) {
+      this.categoryService.updateCategory(cat.id, { name: newName }).subscribe({
+        next: () => {
+          this.toastService.success('อัปเดตหมวดหมู่สำเร็จ', 'Success');
+          this.fetchCategories();
+        },
+        error: () => this.toastService.error('ระบบปฏิเสธการอัปเดต (อาจมีข้อมูลซ้ำ)', 'Error')
+      });
     }
   }
 
   onSubmit() {
     if (this.categoryForm.valid) {
-      console.log('บันทึกหมวดหมู่:', this.categoryForm.value);
-      alert('บันทึกหมวดหมู่สำเร็จ!');
-      this.categoryForm.reset();
+      this.categoryService.createCategory({ name: this.categoryForm.value.categoryName! }).subscribe({
+        next: () => {
+          this.toastService.success('บันทึกหมวดหมู่สำเร็จ!', 'Success');
+          this.categoryForm.reset();
+          this.fetchCategories();
+        },
+        error: () => this.toastService.error('เกิดข้อผิดพลาด หรือมีหมวดหมู่นี้แล้ว', 'Error')
+      });
     }
   }
 }

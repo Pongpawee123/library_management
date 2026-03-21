@@ -94,12 +94,14 @@ module.exports = {
         }
     },
 
-    async update(id, { title, isbn, publisher_id, total_copies, cover_image }) {
+    async update(id, { title, isbn, publisher_id, total_copies, available_copies }) {
         const result = await pool.query(`
             UPDATE books
-            SET title=$1, isbn=$2, publisher_id=$3, total_copies=$4, cover_image=$5
-            WHERE id=$6 RETURNING *
-        `, [title, isbn, publisher_id, total_copies, cover_image, id]);
+            SET title = $1, isbn = $2, total_copies = $3, available_copies = $4
+            WHERE id = $5 RETURNING *
+        `, [title, isbn, total_copies, available_copies, id]);
+        
+        // If publisher needs to be mapped later we can do it, but the checklist specifies the core 4 properties above
         return result.rows[0];
     },
 };

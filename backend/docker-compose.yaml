@@ -9,11 +9,10 @@ services:
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: myfullstack
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
+      - ./database/init:/docker-entrypoint-initdb.d:ro
       - postgres_data:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
-      - ./database/library.sql:/docker-entrypoint-initdb.d/02_library.sql
 
   pgadmin:
     image: dpage/pgadmin4

@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { PublisherService, Publisher } from '../../../services/publisher.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-manage-publishers',
@@ -9,37 +11,55 @@ import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angula
   templateUrl: './manage-publishers.html',
   styleUrl: './manage-publishers.scss'
 })
-export class ManagePublishersComponent {
+export class ManagePublishersComponent implements OnInit {
   
-  // 💡 ข้อมูลจำลองรายชื่อสำนักพิมพ์ (Mock Data)
-  publishersList = [
-    { id: 1, name: 'RMUTT Press', address: 'ปทุมธานี', contact: '02-549-xxxx' },
-    { id: 2, name: 'Tech Book Thailand', address: 'กรุงเทพฯ', contact: '081-xxx-xxxx' },
-    { id: 3, name: 'Knowledge Center', address: 'นนทบุรี', contact: '02-123-xxxx' }
-  ];
+  publishersList: Publisher[] = [];
+  publisherService = inject(PublisherService);
+  toastService = inject(ToastService);
 
-  // 💡 ฟอร์มสำหรับเพิ่มสำนักพิมพ์
   publisherForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
     address: new FormControl(''),
     contact: new FormControl('', [Validators.pattern('^[0-9-]*$')]) // ตรวจสอบให้กรอกได้เฉพาะตัวเลขและขีด
   });
 
-  /* 💡 คำถามสอบ: "Validators.pattern มีประโยชน์อย่างไร?"
-     💬 คำตอบ: "ใช้สำหรับกำหนดรูปแบบข้อมูล (Regular Expression) ที่ยอมรับครับ 
-     เช่น เบอร์โทรศัพท์ต้องเป็นตัวเลขเท่านั้น เพื่อป้องกันความผิดพลาดของข้อมูล (Data Integrity) ครับ" 
-  */
+  ngOnInit() {
+    this.fetchPublishers();
+  }
+
+  fetchPublishers() {
+    this.publisherService.getAllPublishers().subscribe({
+      next: (res) => { if (res.success) this.publishersList = res.data; },
+      error: () => this.toastService.error('ดึงข้อมูลผิดพลาด', 'Error')
+    });
+  }
+
   deletePublisher(id: number) {
     if(confirm('ยืนยันการลบสำนักพิมพ์นี้?')) {
-      this.publishersList = this.publishersList.filter(p => p.id !== id);
+      this.publisherService.deletePublisher(id).subscribe({
+        next: () => {
+          this.toastService.success('ลบข้อมูลสำนักพิมพ์สำเร็จ', 'Success');
+          this.fetchPublishers();
+        },
+        error: () => this.toastService.error('ลบข้อมูลล้มเหลว', 'Error')
+      });
     }
   }
 
   onSubmit() {
     if (this.publisherForm.valid) {
-      console.log('บันทึกสำนักพิมพ์:', this.publisherForm.value);
-      alert('บันทึกข้อมูลสำนักพิมพ์สำเร็จ!');
-      this.publisherForm.reset();
+      this.publisherService.createPublisher({
+        name: this.publisherForm.value.name!,
+        address: this.publisherForm.value.address || '',
+        contact: this.publisherForm.value.contact || ''
+      }).subscribe({
+        next: () => {
+          this.toastService.success('บันทึกข้อมูลสำนักพิมพ์สำเร็จ!', 'Success');
+          this.publisherForm.reset();
+          this.fetchPublishers();
+        },
+        error: () => this.toastService.error('เกิดข้อผิดพลาดในการบันทึก', 'Error')
+      });
     }
   }
 }

@@ -1,75 +1,81 @@
-<div class="book-detail-container fade-in p-4" *ngIf="book">
+<div class="book-detail-container fade-in">
   
-<a [routerLink]="['/catalog']" class="btn btn-link text-decoration-none p-0 mb-4 text-primary" style="cursor: pointer;">
-  <i class="bi bi-arrow-left me-1"></i> กลับไปหน้าคลังหนังสือ
-</a>
+  <button class="back-button" (click)="goBack()">
+    <i class="bi bi-arrow-left"></i> Back to Catalog
+  </button>
 
-  <div class="row g-5">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="state-container">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-3">Loading book details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="hasError && !isLoading" class="state-container text-danger">
+    <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+    <p class="mt-3">Book not found or an error occurred.</p>
+  </div>
+
+  <!-- Book Layout -->
+  <div class="saas-card" *ngIf="!isLoading && !hasError && book">
     
-    <!-- 🖼️ ฝั่งซ้าย: รูปปกหนังสือ -->
-    <div class="col-lg-4">
-      <!-- 💡 เพิ่ม bg-light และกำหนดความสูงขั้นต่ำ เพื่อให้รูปพื้นหลังใสดูโดดเด่น -->
-      <div class="book-cover-large shadow-lg rounded-4 d-flex align-items-center justify-content-center bg-light" style="min-height: 400px; padding: 2rem;">
-        
-        <!-- 💡 เปลี่ยนจาก {{ book.cover }} เป็นแท็ก img -->
-        <img [src]="book.imageUrl" [alt]="book.title" 
-             style="max-height: 320px; width: auto; object-fit: contain; filter: drop-shadow(0 15px 25px rgba(0,0,0,0.2)); transition: transform 0.3s ease;"
-             class="book-image-hover">
-             
-      </div>
+    <!-- Image Column -->
+    <div class="book-image-col">
+      <img [src]="book.cover_image || 'https://via.placeholder.com/400x600'" 
+           (error)="book.cover_image = 'https://via.placeholder.com/400x600'"
+           [alt]="book.title" class="main-cover">
     </div>
 
-    <!-- 📝 ฝั่งขวา: รายละเอียดหนังสือ -->
-    <div class="col-lg-8">
-      <div class="d-flex align-items-center gap-2 mb-2">
-        <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">{{ book.category }}</span>
-        <span class="badge rounded-pill px-3 py-2" [ngClass]="book.available > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-          {{ book.available > 0 ? 'พร้อมให้ยืม' : 'ถูกยืมเต็มแล้ว' }}
+    <!-- Info Column -->
+    <div class="book-info-col">
+      <div class="tags">
+        <span class="category-tag">{{ book.categories?.[0] || 'Uncategorized' }}</span>
+        <span class="status-badge" [class.available]="book.available_copies > 0">
+          {{ book.available_copies > 0 ? 'Available (' + book.available_copies + ' left)' : 'Currently Borrowed' }}
         </span>
       </div>
 
-      <h1 class="fw-bold text-dark mb-3 mt-3">{{ book.title }}</h1>
-      
-      <div class="author-box d-flex align-items-center gap-3 mb-4 p-3 bg-light rounded-4" style="width: fit-content;">
-        <div class="avatar-sm bg-white rounded-circle shadow-sm d-flex justify-content-center align-items-center" style="width: 40px; height: 40px; font-size: 1.2rem;">✍️</div>
-        <div>
-          <div class="small text-muted mb-1">ผู้เขียน</div>
-          <div class="fw-bold text-dark">{{ book.author }}</div>
+      <h1 class="book-title">{{ book.title }}</h1>
+      <h3 class="book-author">By {{ book.authors?.join(', ') || 'Unknown Author' }}</h3>
+
+      <div class="book-meta">
+        <div class="meta-item">
+          <span class="label">ISBN</span>
+          <span class="value">{{ book.isbn }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Publisher</span>
+          <span class="value">{{ book.publisher || 'N/A' }}</span>
+        </div>
+        <div class="meta-item">
+          <span class="label">Total Copies</span>
+          <span class="value">{{ book.total_copies }}</span>
         </div>
       </div>
 
-      <hr class="my-4 opacity-25">
+      <p class="book-description text-muted mt-4">
+        Dive into the expansive world embedded within this book. Learn and explore themes curated by expert authors to expand your horizons. 
+      </p>
 
-      <div class="row mb-4 bg-light rounded-4 p-3 mx-0">
-        <div class="col-6 border-end">
-          <div class="small text-muted mb-1">ISBN</div>
-          <div class="fw-semibold text-dark">{{ book.isbn }}</div>
-        </div>
-        <div class="col-6 ps-4">
-          <div class="small text-muted mb-1">สำนักพิมพ์</div>
-          <div class="fw-semibold text-dark">{{ book.publisher }}</div>
-        </div>
-      </div>
-
-      <h5 class="fw-bold text-dark mb-3">เรื่องย่อ</h5>
-      <p class="text-muted leading-relaxed mb-5" style="line-height: 1.8;">{{ book.description }}</p>
-
-      <div class="d-flex gap-3">
-        <button class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm d-flex align-items-center" 
-                [disabled]="book.available === 0"
+      <div class="action-bar">
+        <!-- Logged In View -->
+        <button class="btn-borrow" 
+                *ngIf="authService.isAuthenticated()"
+                [disabled]="book.available_copies === 0"
                 (click)="borrowBook()">
-          <i class="bi bi-check2-circle me-2 fs-5"></i>ยืมหนังสือเล่มนี้
+          {{ book.available_copies > 0 ? 'Borrow Book' : 'Not Available' }}
         </button>
-        <button class="btn btn-outline-secondary btn-lg rounded-pill px-4 d-flex align-items-center">
-          <i class="bi bi-bookmark fs-5 me-2"></i> เก็บไว้ดูภายหลัง
+
+        <!-- Guest View -->
+        <button class="btn-borrow guest-btn" 
+                *ngIf="!authService.isAuthenticated()"
+                (click)="authService.openModal('login')">
+          <i class="bi bi-box-arrow-in-right me-2"></i> Login to borrow
         </button>
       </div>
 
-      <div class="mt-4 small text-muted d-flex align-items-center">
-        <i class="bi bi-info-circle me-2"></i>
-        * เหลือหนังสือในคลังอีก <strong class="text-dark mx-1">{{ book.available }}</strong> จากทั้งหมด {{ book.total }} เล่ม
-      </div>
     </div>
 
   </div>
+
 </div>

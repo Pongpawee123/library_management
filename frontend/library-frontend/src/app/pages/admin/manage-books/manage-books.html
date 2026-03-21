@@ -31,19 +31,19 @@
               </div>
             </td>
             
-            <td>{{ book.publisher }}</td>
+            <td>{{ book.publisher || '-' }}</td>
             
-            <td class="text-center">{{ book.total }}</td>
+            <td class="text-center">{{ book.total_copies }}</td>
             
             <td class="text-center">
               <span class="badge rounded-pill" 
-                    [ngClass]="book.available > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
-                {{ book.available }} เล่ม
+                    [ngClass]="book.available_copies > 0 ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'">
+                {{ book.available_copies }} เล่ม
               </span>
             </td>
             
             <td class="text-center">
-              <button class="btn btn-sm btn-light text-primary me-2 btn-action" title="แก้ไข">
+              <button class="btn btn-sm btn-light text-primary me-2 btn-action" (click)="editBook(book)" title="แก้ไข">
                 <i class="bi bi-pencil-square"></i>
               </button>
               

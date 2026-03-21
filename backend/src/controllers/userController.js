@@ -1,7 +1,50 @@
 const User = require('../models/user.js');
 const response = require('../utils/responseUtil.js');
+const pool = require('../config/db.js');
 
 module.exports = {
+
+    // GET /api/users/me — ดึง Profile ข้อมูลตัวเอง
+    async getMe(req, res) {
+        try {
+            const userId = req.user?.sub || req.user?.id;
+            
+            if(!userId) return response.error(res, 'Unauthorized', 401);
+            
+            const userResult = await pool.query(`
+                SELECT u.id as user_id, u.email, u.role, m.id as member_id, m.full_name, m.phone, m.status
+                FROM users u
+                LEFT JOIN members m ON u.id = m.user_id
+                WHERE u.id = $1
+            `, [userId]);
+
+            if (userResult.rows.length === 0) {
+                return response.notFound(res, 'User record not found');
+            }
+
+            const profile = userResult.rows[0];
+
+            if (profile.member_id) {
+                const borrowResult = await pool.query(`
+                    SELECT b.id as borrow_id, bk.title, b.borrowed_at, b.due_date, b.status
+                    FROM borrow_records b
+                    JOIN books bk ON b.book_id = bk.id
+                    WHERE b.member_id = $1 AND b.status IN ('borrowed', 'overdue')
+                `, [profile.member_id]);
+                
+                profile.active_borrows = borrowResult.rows;
+                profile.borrow_count = borrowResult.rows.length;
+            } else {
+                profile.active_borrows = [];
+                profile.borrow_count = 0;
+            }
+
+            return response.success(res, profile);
+        } catch (err) {
+            console.error('getMe ERROR:', err);
+            return response.error(res, err.message);
+        }
+    },
 
     // GET /api/users — ดู users ทั้งหมด
     async getAllUsers(req, res) {

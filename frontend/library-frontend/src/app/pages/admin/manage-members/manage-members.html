@@ -30,11 +30,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let member of members">
-            <td class="px-4 py-3 fw-bold text-muted">{{ member.id }}</td>
+            <td class="px-4 py-3 fw-bold text-muted">{{ member.user_id }}</td>
             <td class="py-3">
               <div class="d-flex align-items-center gap-3">
-                <div class="avatar-circle fw-bold shadow-sm" [ngClass]="member.role === 'Admin' ? 'bg-danger text-white' : 'bg-primary-subtle text-primary'">
-                  {{ member.name.charAt(0) }}
+                <div class="avatar-circle fw-bold shadow-sm" [ngClass]="member.role === 'admin' ? 'bg-danger text-white' : 'bg-primary-subtle text-primary'">
+                  {{ member.name?.charAt(0) || 'U' }}
                 </div>
                 <span class="fw-semibold text-dark">{{ member.name }}</span>
               </div>
@@ -42,12 +42,12 @@
             <td class="py-3 text-muted">
               <i class="bi bi-envelope me-1"></i> {{ member.email }}
             </td>
-            <td class="py-3 small text-muted">{{ member.joinedDate }}</td>
+            <td class="py-3 small text-muted">{{ member.joined_date | date:'mediumDate' }}</td>
             <td class="py-3">
               <div class="d-flex flex-column gap-1 align-items-start">
                 <!-- ป้าย Role -->
-                <span class="badge" [ngClass]="member.role === 'Admin' ? 'bg-danger' : 'bg-info'">
-                  <i class="bi" [ngClass]="member.role === 'Admin' ? 'bi-shield-lock-fill' : 'bi-person-fill'"></i> {{ member.role }}
+                <span class="badge" [ngClass]="member.role === 'admin' ? 'bg-danger' : 'bg-info'">
+                  <i class="bi" [ngClass]="member.role === 'admin' ? 'bi-shield-lock-fill' : 'bi-person-fill'"></i> {{ member.role | titlecase }}
                 </span>
                 <!-- ป้าย Status -->
                 <span class="badge rounded-pill" [ngClass]="member.status === 'Active' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
@@ -57,15 +57,15 @@
             </td>
             <td class="px-4 py-3 text-end">
               <!-- ปุ่ม Actions -->
-              <button class="btn btn-sm rounded-circle me-1" 
+              <button *ngIf="member.role !== 'admin'" class="btn btn-sm rounded-circle me-1" 
                       [ngClass]="member.status === 'Active' ? 'btn-outline-warning' : 'btn-outline-success'"
                       (click)="toggleStatus(member)" 
                       [title]="member.status === 'Active' ? 'ระงับการใช้งาน' : 'ปลดบล็อก'">
                 <i class="bi" [ngClass]="member.status === 'Active' ? 'bi-pause-circle' : 'bi-play-circle'"></i>
               </button>
               
-              <button class="btn btn-sm btn-outline-danger rounded-circle" 
-                      (click)="deleteMember(member.id, member.name)" 
+              <button *ngIf="member.role !== 'admin'" class="btn btn-sm btn-outline-danger rounded-circle" 
+                      (click)="deleteMember(member.user_id, member.name)" 
                       title="ลบสมาชิก">
                 <i class="bi bi-trash3"></i>
               </button>

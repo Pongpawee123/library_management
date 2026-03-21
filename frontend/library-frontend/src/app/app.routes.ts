@@ -4,6 +4,7 @@ import { Routes } from '@angular/router';
 import { AdminLayout } from './layouts/admin-layout/admin-layout';
 import { MemberLayout } from './layouts/member-layout/member-layout';
 import { AuthLayout } from './layouts/auth-layout/auth-layout';
+import { authGuard, adminGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'catalog', pathMatch: 'full' },
@@ -15,9 +16,9 @@ export const routes: Routes = [
     children: [
       { path: 'catalog', loadComponent: () => import('./pages/member/catalog/catalog').then(m => m.CatalogComponent) },
       { path: 'book-detail/:id', loadComponent: () => import('./pages/member/book-detail/book-detail').then(m => m.BookDetailComponent) },
-      { path: 'my-borrows', loadComponent: () => import('./pages/member/my-borrows/my-borrows').then(m => m.MyBorrowsComponent) },
-      { path: 'my-reservations', loadComponent: () => import('./pages/member/my-reservations/my-reservations').then(m => m.MyReservationsComponent) },
-      { path: 'profile', loadComponent: () => import('./pages/member/profile/profile').then(m => m.Profile) }
+      { path: 'my-borrows', canActivate: [authGuard], loadComponent: () => import('./pages/member/my-borrows/my-borrows').then(m => m.MyBorrowsComponent) },
+      { path: 'my-reservations', canActivate: [authGuard], loadComponent: () => import('./pages/member/my-reservations/my-reservations').then(m => m.MyReservationsComponent) },
+      { path: 'profile', canActivate: [authGuard], loadComponent: () => import('./pages/member/profile/profile').then(m => m.Profile) }
     ]
   },
 
@@ -25,6 +26,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: AdminLayout,
+    canActivate: [adminGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', loadComponent: () => import('./pages/admin/dashboard/dashboard').then(m => m.AdminDashboardComponent) },

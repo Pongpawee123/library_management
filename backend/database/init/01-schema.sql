@@ -1,6 +1,6 @@
 --  schema.sql  –  Library Management System
 --  Roles: admin, librarian, member
-
+ 
 -- 1. USERS
 -- -------------------------------------------------------------
 CREATE TABLE users (
@@ -11,7 +11,7 @@ CREATE TABLE users (
                   CHECK (role IN ('admin', 'librarian', 'member')),
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
 -- 2. MEMBERS
 -- -------------------------------------------------------------
 CREATE TABLE members (
@@ -23,7 +23,7 @@ CREATE TABLE members (
                CHECK (status IN ('active', 'suspended')),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
 -- 3. PUBLISHERS
 ---------------------------------------------------------------
 CREATE TABLE publishers (
@@ -32,7 +32,7 @@ CREATE TABLE publishers (
     contact_email VARCHAR(255),
     created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
 -- 4. AUTHORS
 ---------------------------------------------------------------
 CREATE TABLE authors (
@@ -41,14 +41,14 @@ CREATE TABLE authors (
     bio        TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
+ 
 -- 5. CATEGORIES
 ---------------------------------------------------------------
 CREATE TABLE categories (
     id   SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL UNIQUE
 );
-
+ 
 -- -------------------------------------------------------------
 -- 6. BOOKS
 --    cover_image เก็บเป็น URL ชี้ไปยังไฟล์รูปภาพ
@@ -66,10 +66,10 @@ CREATE TABLE books (
     created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CHECK (available_copies <= total_copies)
 );
-
+ 
 CREATE INDEX idx_books_title ON books(title);
 CREATE INDEX idx_books_isbn  ON books(isbn);
-
+ 
 -- 7. BOOK_AUTHORS  (Many-to-Many)
 ---------------------------------------------------------------
 CREATE TABLE book_authors (
@@ -77,7 +77,7 @@ CREATE TABLE book_authors (
     author_id INT NOT NULL REFERENCES authors(id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, author_id)
 );
-
+ 
 -- 8. BOOK_CATEGORIES  (Many-to-Many)
 ---------------------------------------------------------------
 CREATE TABLE book_categories (
@@ -85,7 +85,7 @@ CREATE TABLE book_categories (
     category_id INT NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
     PRIMARY KEY (book_id, category_id)
 );
-
+ 
 -- 9. BORROW_RECORDS
 ---------------------------------------------------------------
 CREATE TABLE borrow_records (
@@ -100,14 +100,14 @@ CREATE TABLE borrow_records (
     status      VARCHAR(50) DEFAULT 'borrowed'
                 CHECK (status IN ('borrowed', 'returned', 'overdue'))
 );
-
+ 
 CREATE INDEX idx_borrow_member ON borrow_records(member_id);
 CREATE INDEX idx_borrow_book   ON borrow_records(book_id);
-
+ 
 CREATE UNIQUE INDEX unique_active_borrow
 ON borrow_records(member_id, book_id)
 WHERE returned_at IS NULL;
-
+ 
 -- 10. RESERVATIONS
 ---------------------------------------------------------------
 CREATE TABLE reservations (
@@ -118,6 +118,6 @@ CREATE TABLE reservations (
     status      VARCHAR(50) DEFAULT 'pending'
                 CHECK (status IN ('pending', 'fulfilled', 'cancelled'))
 );
-
+ 
 CREATE INDEX idx_reservation_member ON reservations(member_id);
 CREATE INDEX idx_reservation_book   ON reservations(book_id);

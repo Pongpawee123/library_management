@@ -17,7 +17,6 @@
           <tr>
             <th class="ps-4">ผู้แต่ง</th>
             <th>ประวัติย่อ</th>
-            <th class="text-center">จำนวนผลงาน</th>
             <th class="text-center">จัดการ</th>
           </tr>
         </thead>
@@ -26,18 +25,13 @@
             <td class="ps-4">
               <div class="d-flex align-items-center gap-3">
                 <div class="author-avatar shadow-sm">
-                  {{ author.name.charAt(0) }}
+                  {{ author.name?.charAt(0) || 'U' }}
                 </div>
                 <span class="fw-bold">{{ author.name }}</span>
               </div>
             </td>
             <td>
               <span class="text-muted small">{{ author.bio || 'ไม่มีข้อมูลประวัติ' }}</span>
-            </td>
-            <td class="text-center">
-              <span class="badge bg-info-subtle text-info rounded-pill px-3">
-                {{ author.bookCount }} เล่ม
-              </span>
             </td>
             <td class="text-center">
               <button class="btn btn-icon text-primary me-1" title="แก้ไข">

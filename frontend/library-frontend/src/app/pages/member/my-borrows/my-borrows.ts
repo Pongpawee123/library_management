@@ -1,24 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BorrowService, MyBorrowRecord } from '../../../services/borrow.service';
 
 @Component({
   selector: 'app-my-borrows',
   standalone: true,
   imports: [CommonModule],
-  // 💡 แก้ให้ตรงกับชื่อไฟล์จริงในรูปของเอิร์ธ
   templateUrl: './my-borrows.html',
   styleUrl: './my-borrows.scss'
 })
-export class MyBorrowsComponent {
-  
-  myBorrowHistory = [
-    { id: 'BR-001', bookTitle: 'Angular 18 Essentials', author: 'John Doe', borrowDate: '2026-03-15', dueDate: '2026-03-22', status: 'Borrowed' },
-    { id: 'BR-002', bookTitle: 'Clean Code: A Handbook', author: 'Robert C. Martin', borrowDate: '2026-02-20', dueDate: '2026-02-27', status: 'Returned' },
-    { id: 'BR-003', bookTitle: 'UX/UI Design for Beginners', author: 'Jane Smith', borrowDate: '2026-03-18', dueDate: '2026-03-25', status: 'Pending' },
-    { id: 'BR-004', bookTitle: 'Database Systems', author: 'Somchai Dev', borrowDate: '2026-03-01', dueDate: '2026-03-08', status: 'Overdue' }
-  ];
+export class MyBorrowsComponent implements OnInit {
+  borrows: MyBorrowRecord[] = [];
+  isLoading = true;
+  hasError = false;
 
-  renewBook(record: any) {
-    alert(`ส่งคำขอต่อเวลาการยืมหนังสือ "${record.bookTitle}" ไปยังแอดมินแล้ว!`);
+  private borrowService = inject(BorrowService);
+
+  ngOnInit() {
+    this.fetchMyBorrows();
+  }
+
+  fetchMyBorrows() {
+    this.isLoading = true;
+    this.hasError = false;
+    
+    this.borrowService.getMyBorrows().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.borrows = res.data;
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.hasError = true;
+        this.isLoading = false;
+      }
+    });
   }
 }
