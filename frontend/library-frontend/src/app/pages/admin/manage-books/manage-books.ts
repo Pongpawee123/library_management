@@ -38,10 +38,10 @@ export class ManageBooksComponent implements OnInit {
   onSubmit() {
     if (this.bookForm.valid) {
       this.bookService.createBook({
-        title: this.bookForm.value.title,
-        isbn: this.bookForm.value.isbn,
-        publisher_id: Number(this.bookForm.value.publisher) || null, // Assuming numerical mapping if supported, else text
-        total_copies: this.bookForm.value.totalCopies
+        title: this.bookForm.value.title ?? undefined,
+        isbn: this.bookForm.value.isbn ?? undefined,
+        publisher_id: Number(this.bookForm.value.publisher) || undefined,
+        total_copies: this.bookForm.value.totalCopies ?? undefined
       }).subscribe({
         next: () => {
           this.toastService.success('บันทึกหนังสือสำเร็จ!', 'Success');

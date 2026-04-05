@@ -29,14 +29,14 @@
     <!-- Info Column -->
     <div class="book-info-col">
       <div class="tags">
-        <span class="category-tag">{{ book.categories?.[0] || 'Uncategorized' }}</span>
+        <span class="category-tag">{{ book.category || 'Uncategorized' }}</span>
         <span class="status-badge" [class.available]="book.available_copies > 0">
           {{ book.available_copies > 0 ? 'Available (' + book.available_copies + ' left)' : 'Currently Borrowed' }}
         </span>
       </div>
 
       <h1 class="book-title">{{ book.title }}</h1>
-      <h3 class="book-author">By {{ book.authors?.join(', ') || 'Unknown Author' }}</h3>
+      <h3 class="book-author">By {{ book.author || 'Unknown Author' }}</h3>
 
       <div class="book-meta">
         <div class="meta-item">
@@ -69,7 +69,7 @@
         <!-- Guest View -->
         <button class="btn-borrow guest-btn" 
                 *ngIf="!authService.isAuthenticated()"
-                (click)="authService.openModal('login')">
+                (click)="navigateToLogin()">
           <i class="bi bi-box-arrow-in-right me-2"></i> Login to borrow
         </button>
       </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BookService, Book } from '../../../services/book.service';
 import { ToastService } from '../../../services/toast.service';
 import { AuthService } from '../../../services/auth.service';
@@ -19,6 +19,7 @@ export class BookDetailComponent implements OnInit {
   hasError = false;
 
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private bookService = inject(BookService);
   private borrowService = inject(BorrowService);
   private location = inject(Location);
@@ -52,6 +53,10 @@ export class BookDetailComponent implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  navigateToLogin() {
+    this.router.navigate(['/auth/login']);
   }
 
   borrowBook() {

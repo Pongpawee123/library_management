@@ -27,4 +27,8 @@ export class MemberLayout {
     this.authService.logout();
     this.router.navigate(['/catalog']);
   }
+
+  navigateToLogin() {
+    this.router.navigate(['/auth/login']);
+  }
 }

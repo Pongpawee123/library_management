@@ -50,9 +50,9 @@
 
       <!-- Content Area -->
       <div class="card-content">
-        <div class="category-tag">{{ book.categories?.[0] || 'Uncategorized' }}</div>
+        <div class="category-tag">{{ book.category || 'Uncategorized' }}</div>
         <h3 class="book-title">{{ book.title }}</h3>
-        <p class="book-author">{{ book.authors?.join(', ') || 'Unknown Author' }}</p>
+        <p class="book-author">{{ book.author || 'Unknown Author' }}</p>
       </div>
 
     </div>
