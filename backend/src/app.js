@@ -40,6 +40,8 @@ app.use('/api/borrows', borrowRoute);
 app.use('/api/borrow', borrowRoute); // Singular alias specifically for the assignment tests
 app.use('/api/categories', categoryRoute);
 app.use('/api/publishers', publisherRoute);
+app.use('/api/reports', reportRoute);
+app.use('/api/reservations', require('./routes/reservationRoute.js'));
 app.use('/api/users', userRoute);
 
 // Start server is handled in server.js, just export app

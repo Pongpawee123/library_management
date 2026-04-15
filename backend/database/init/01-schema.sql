@@ -97,8 +97,8 @@ CREATE TABLE borrow_records (
     returned_at TIMESTAMP,
     fine_amount NUMERIC(10,2) DEFAULT 0 CHECK (fine_amount >= 0),
     extended    BOOLEAN DEFAULT FALSE,
-    status      VARCHAR(50) DEFAULT 'borrowed'
-                CHECK (status IN ('borrowed', 'returned', 'overdue'))
+    status      VARCHAR(50) DEFAULT 'pending'
+                CHECK (status IN ('pending', 'borrowed', 'returned', 'overdue'))
 );
  
 CREATE INDEX idx_borrow_member ON borrow_records(member_id);

@@ -104,4 +104,12 @@ module.exports = {
         // If publisher needs to be mapped later we can do it, but the checklist specifies the core 4 properties above
         return result.rows[0];
     },
+
+    // ลบหนังสือ
+    async remove(id) {
+        const result = await pool.query(
+            'DELETE FROM books WHERE id = $1 RETURNING *', [id]
+        );
+        return result.rows[0];
+    },
 };

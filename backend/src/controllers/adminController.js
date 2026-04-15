@@ -47,21 +47,46 @@ module.exports = {
 
     // PATCH /api/admin/borrow/:id/approve
     async approveBorrow(req, res) {
+        const client = await pool.connect();
         try {
             const borrowId = req.params.id;
-            const result = await pool.query(`
+
+            // Check current status
+            const check = await client.query('SELECT * FROM borrow_records WHERE id = $1', [borrowId]);
+            if (check.rows.length === 0) {
+                client.release();
+                return response.notFound(res, 'Borrow record not found');
+            }
+            if (check.rows[0].status !== 'pending') {
+                client.release();
+                return response.badRequest(res, 'Only pending requests can be approved');
+            }
+
+            await client.query('BEGIN');
+
+            // Approve: set status, borrowed_at, due_date (14 days from now)
+            const result = await client.query(`
                 UPDATE borrow_records 
-                SET status = 'borrowed', borrowed_at = NOW() 
+                SET status = 'borrowed', 
+                    borrowed_at = NOW(),
+                    due_date = NOW() + INTERVAL '14 days'
                 WHERE id = $1 RETURNING *
             `, [borrowId]);
 
-            if (result.rows.length === 0) {
-                return response.notFound(res, 'Borrow record not found');
-            }
+            // Decrease available_copies
+            await client.query(
+                'UPDATE books SET available_copies = available_copies - 1 WHERE id = $1',
+                [result.rows[0].book_id]
+            );
+
+            await client.query('COMMIT');
             return response.success(res, result.rows[0]);
         } catch (err) {
+            await client.query('ROLLBACK');
             console.error('approveBorrow ERROR:', err);
             return response.error(res, err.message);
+        } finally {
+            client.release();
         }
     },
 
@@ -103,7 +128,7 @@ module.exports = {
                     COALESCE(m.full_name, 'Administrator') as name, 
                     u.email, 
                     u.role, 
-                    COALESCE(m.status, 'Active') as status,
+                    COALESCE(m.status, 'active') as status,
                     u.created_at as joined_date
                 FROM users u
                 LEFT JOIN members m ON u.id = m.user_id
@@ -125,7 +150,7 @@ module.exports = {
                 // If they are admin or don't have member profile, ignore smoothly
                 return response.success(res, { message: 'Ignored for non-member profiles' });
             }
-            const newStatus = memberRec.rows[0].status === 'Active' ? 'Inactive' : 'Active';
+            const newStatus = memberRec.rows[0].status === 'active' ? 'suspended' : 'active';
             await pool.query('UPDATE members SET status = $1 WHERE user_id = $2', [newStatus, userId]);
             return response.success(res, { status: newStatus });
         } catch (err) {

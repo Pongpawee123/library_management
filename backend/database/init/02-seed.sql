@@ -221,7 +221,7 @@ INSERT INTO borrow_records
 VALUES
 -- คืนแล้วปกติ ────────────────────────────────────────────────
 (1, 6,  NOW()-INTERVAL '30 days', NOW()-INTERVAL '16 days', NOW()-INTERVAL '18 days', 0,     FALSE, 'returned'),
-(2, 12, NOW()-INTERVAL '25 days', NOW()-INTERVAL '11 days', NOW()-INTERVAL '12 days', 0,     FALSE, 'returned');
+(2, 12, NOW()-INTERVAL '25 days', NOW()-INTERVAL '11 days', NOW()-INTERVAL '12 days', 0,     FALSE, 'returned'),
 -- คืนช้า มีค่าปรับ
 (4, 9,  NOW()-INTERVAL '30 days', NOW()-INTERVAL '16 days', NOW()-INTERVAL '10 days', 60.00, FALSE, 'returned'),
 (1, 11, NOW()-INTERVAL '28 days', NOW()-INTERVAL '14 days', NOW()-INTERVAL '8 days',  30.00, FALSE, 'returned'),

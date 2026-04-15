@@ -82,7 +82,7 @@ module.exports = {
         return result.rows[0];
     },
 
-    // ยืมหนังสือ
+    // ยืมหนังสือ (สร้างคำขอ pending)
     async borrow(member_id, book_id) {
         
         // Checklist explicit pre-transaction duplicate check
@@ -97,35 +97,17 @@ module.exports = {
             throw new Error('You already borrowed this book');
         }
 
-        const client = await pool.connect();
-        try {
-            await client.query('BEGIN');
+        // กำหนด due_date 14 วัน (provisional, will be recalculated on approval)
+        const due_date = new Date();
+        due_date.setDate(due_date.getDate() + 14);
 
-            // กำหนด due_date 14 วัน
-            const due_date = new Date();
-            due_date.setDate(due_date.getDate() + 14);
+        // บันทึกการขอยืม (status = 'pending', ไม่ลด available_copies)
+        const result = await pool.query(`
+            INSERT INTO borrow_records (member_id, book_id, due_date, status)
+            VALUES ($1, $2, $3, 'pending') RETURNING *
+        `, [member_id, book_id, due_date]);
 
-            // บันทึกการยืม
-            const result = await client.query(`
-                INSERT INTO borrow_records (member_id, book_id, due_date)
-                VALUES ($1, $2, $3) RETURNING *
-            `, [member_id, book_id, due_date]);
-
-            // ลด available_copies
-            await client.query(
-                'UPDATE books SET available_copies = available_copies - 1 WHERE id = $1',
-                [book_id]
-            );
-
-            await client.query('COMMIT');
-            return result.rows[0];
-
-        } catch (err) {
-            await client.query('ROLLBACK');
-            throw err;
-        } finally {
-            client.release();
-        }
+        return result.rows[0];
     },
 
     // คืนหนังสือ
